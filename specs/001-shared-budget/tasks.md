@@ -221,3 +221,12 @@ Task: "app/(auth)/login/page.tsx を実装"
 - 実装前にテストが失敗することを確認すること（憲法II、テストファースト絶対厳守）
 - 論理的なタスクの区切りごとにコミットする
 - 各チェックポイントで一度立ち止まり、そのストーリー単体の動作を確認する
+
+## Phase 7: Convergence
+
+`/speckit-converge` によるコードベース評価で見つかった、仕様・タスクとの差分。
+
+- [X] T043 ダッシュボード画面にログアウト操作（`signOut()`呼び出し）を追加する per FR-002 (missing)。`app/(dashboard)/layout.tsx`にServer Action経由のログアウトフォームを追加
+- [X] T044 `components/dashboard.tsx` の `saveEdit`・`handleDelete` で、PATCH/DELETEが404（対象が既に削除済み）を返した場合にユーザーへエラーメッセージを表示するようにする per Edge Cases: 編集中の削除競合 (partial)
+- [X] T045 メンバーBが既存の支出記録を編集・削除した際、メンバーAの画面に数秒以内に反映されることを検証するテストを追加する per US1/AC5 (missing)。`tests/e2e/expense-sharing.spec.ts`に編集・削除の検証を追加し成功を確認済み
+

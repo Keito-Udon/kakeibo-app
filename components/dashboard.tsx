@@ -283,24 +283,55 @@ function ExpenseList({
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editAmount, setEditAmount] = useState("");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   function startEdit(expense: ExpenseRecord) {
     setEditingId(expense.id);
     setEditAmount(String(expense.amount));
+    setActionError(null);
   }
 
+  // 編集中に他のメンバーが同じ記録を削除した場合は404になる（Edge Cases）。
+  // ユーザーに黙って成功扱いにせず、記録が既に存在しないことを伝える。
   async function saveEdit(expenseId: string) {
-    await fetch(`/api/groups/${groupId}/expenses/${expenseId}`, {
+    const res = await fetch(`/api/groups/${groupId}/expenses/${expenseId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: Number(editAmount) }),
     });
+
+    if (res.status === 404) {
+      setActionError("この記録は既に削除されています");
+      setEditingId(null);
+      onChanged();
+      return;
+    }
+    if (!res.ok) {
+      setActionError("編集に失敗しました");
+      return;
+    }
+
+    setActionError(null);
     setEditingId(null);
     onChanged();
   }
 
   async function handleDelete(expenseId: string) {
-    await fetch(`/api/groups/${groupId}/expenses/${expenseId}`, { method: "DELETE" });
+    const res = await fetch(`/api/groups/${groupId}/expenses/${expenseId}`, {
+      method: "DELETE",
+    });
+
+    if (res.status === 404) {
+      setActionError("この記録は既に削除されています");
+      onChanged();
+      return;
+    }
+    if (!res.ok) {
+      setActionError("削除に失敗しました");
+      return;
+    }
+
+    setActionError(null);
     onChanged();
   }
 
@@ -310,18 +341,29 @@ function ExpenseList({
   return (
     <section>
       <h2 className="font-bold">支出一覧</h2>
+      {actionError && (
+        <p data-testid="expense-action-error" className="mt-2 text-red-600">
+          {actionError}
+        </p>
+      )}
       <ul data-testid="expense-list" className="mt-2 flex flex-col gap-2">
         {expenses.map((expense) => (
           <li key={expense.id} className="flex items-center justify-between rounded border p-2">
             {editingId === expense.id ? (
               <div className="flex items-center gap-2">
                 <input
+                  data-testid="expense-edit-amount"
                   className="border rounded px-2 py-1 w-24"
                   type="number"
                   value={editAmount}
                   onChange={(e) => setEditAmount(e.target.value)}
                 />
-                <button type="button" onClick={() => saveEdit(expense.id)} className="text-blue-600">
+                <button
+                  data-testid="expense-edit-save"
+                  type="button"
+                  onClick={() => saveEdit(expense.id)}
+                  className="text-blue-600"
+                >
                   保存
                 </button>
                 <button type="button" onClick={() => setEditingId(null)} className="text-gray-500">
@@ -339,10 +381,20 @@ function ExpenseList({
             )}
             {editingId !== expense.id && (
               <div className="flex gap-2">
-                <button type="button" onClick={() => startEdit(expense)} className="text-blue-600">
+                <button
+                  data-testid="expense-edit-start"
+                  type="button"
+                  onClick={() => startEdit(expense)}
+                  className="text-blue-600"
+                >
                   編集
                 </button>
-                <button type="button" onClick={() => handleDelete(expense.id)} className="text-red-600">
+                <button
+                  data-testid="expense-delete"
+                  type="button"
+                  onClick={() => handleDelete(expense.id)}
+                  className="text-red-600"
+                >
                   削除
                 </button>
               </div>

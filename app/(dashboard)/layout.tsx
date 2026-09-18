@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { auth } from "@/lib/auth";
+import { auth, signOut } from "@/lib/auth";
 
 export default async function DashboardLayout({
   children,
@@ -12,5 +12,25 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  return <div className="min-h-full flex flex-col">{children}</div>;
+  return (
+    <div className="min-h-full flex flex-col">
+      <header className="flex justify-end p-4">
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/login" });
+          }}
+        >
+          <button
+            data-testid="logout-button"
+            type="submit"
+            className="text-sm text-gray-600 underline"
+          >
+            ログアウト
+          </button>
+        </form>
+      </header>
+      {children}
+    </div>
+  );
 }

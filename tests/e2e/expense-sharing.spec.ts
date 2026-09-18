@@ -59,6 +59,22 @@ test("2人のユーザーがグループを共有し、支出記録が数秒以�
   // ユーザーBの画面に、リロードなしで数秒以内に反映される（FR-013, SC-002）
   await expect(pageB.getByTestId("expense-list")).toContainText("コンビニ", { timeout: 10_000 });
 
+  // ユーザーBが、ユーザーAの記録を編集する（FR-012, US1/AC5）
+  await pageB.getByTestId("expense-edit-start").click();
+  await pageB.getByTestId("expense-edit-amount").fill("2000");
+  await pageB.getByTestId("expense-edit-save").click();
+
+  // ユーザーAの画面にも数秒以内に反映される（FR-013, US1/AC5）
+  await expect(pageA.getByTestId("expense-list")).toContainText("2000円", { timeout: 10_000 });
+
+  // ユーザーBがその記録を削除する
+  await pageB.getByTestId("expense-delete").click();
+
+  // ユーザーAの画面からも数秒以内に消える
+  await expect(pageA.getByTestId("expense-list")).not.toContainText("コンビニ", {
+    timeout: 10_000,
+  });
+
   await contextA.close();
   await contextB.close();
 });
