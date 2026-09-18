@@ -6,6 +6,7 @@
 - 企画検討メモ: [`docs/project-plan.md`](docs/project-plan.md)
 - 機能仕様: [`specs/001-shared-budget/spec.md`](specs/001-shared-budget/spec.md)
 - 実装プラン: [`specs/001-shared-budget/plan.md`](specs/001-shared-budget/plan.md)
+- デプロイ手順: [`docs/deployment.md`](docs/deployment.md)
 
 ## セットアップ
 
