@@ -1,8 +1,14 @@
 "use client";
 
+import { CreditCard, Link2, Pencil, Plus, Trash2, Wallet, X } from "lucide-react";
 import { useState } from "react";
 import useSWR from "swr";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Field, Input, Select } from "@/components/ui/field";
+import { ErrorMessage } from "@/components/ui/message";
 import { fetcher, postJson } from "@/lib/fetcher";
 
 type Member = { id: string; displayName: string };
@@ -44,12 +50,12 @@ export function Dashboard({
   const memberName = (id: string) => members.find((m) => m.id === id)?.displayName ?? "?";
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-6 p-8">
-      <h1 data-testid="group-name" className="text-2xl font-bold">
+    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-4 pb-12 pt-4">
+      <h1 data-testid="group-name" className="text-2xl font-bold text-foreground">
         {groupName}
       </h1>
 
-      <BudgetSection
+      <BudgetHero
         groupId={groupId}
         monthlyBudget={data?.monthlyBudget ?? null}
         currentMonthTotal={data?.currentMonthTotal ?? 0}
@@ -57,16 +63,21 @@ export function Dashboard({
         onUpdated={() => mutate()}
       />
 
-      <InviteSection groupId={groupId} />
-
       <AddExpenseForm groupId={groupId} members={members} onAdded={() => mutate()} />
 
-      <ExpenseList expenses={data?.expenses ?? []} memberName={memberName} onChanged={() => mutate()} groupId={groupId} />
+      <ExpenseList
+        expenses={data?.expenses ?? []}
+        memberName={memberName}
+        onChanged={() => mutate()}
+        groupId={groupId}
+      />
+
+      <InviteSection groupId={groupId} />
     </main>
   );
 }
 
-function BudgetSection({
+function BudgetHero({
   groupId,
   monthlyBudget,
   currentMonthTotal,
@@ -81,6 +92,12 @@ function BudgetSection({
 }) {
   const [value, setValue] = useState(monthlyBudget ? String(monthlyBudget) : "");
   const [submitting, setSubmitting] = useState(false);
+
+  const isOverBudget = remaining !== null && remaining < 0;
+  const usageRatio =
+    monthlyBudget && monthlyBudget > 0
+      ? Math.min(currentMonthTotal / monthlyBudget, 1)
+      : 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -98,71 +115,119 @@ function BudgetSection({
   }
 
   return (
-    <section className="rounded border p-4">
-      <h2 className="font-bold">今月の予算</h2>
-      {monthlyBudget === null ? (
-        <p data-testid="budget-remaining" className="text-gray-600">
-          未設定
-        </p>
-      ) : (
-        <p
-          data-testid="budget-remaining"
-          className={remaining !== null && remaining < 0 ? "text-red-600 font-bold" : ""}
-        >
-          残額: {remaining}円（予算{monthlyBudget}円 − 支出{currentMonthTotal}円）
-        </p>
+    <Card className={isOverBudget ? "border-danger/40" : ""}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex size-10 shrink-0 items-center justify-center rounded-full ${
+              isOverBudget ? "bg-danger/10 text-danger" : "bg-primary/10 text-primary"
+            }`}
+          >
+            <Wallet className="size-5" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm text-muted">今月の残額</p>
+            <p data-testid="budget-remaining">
+              {monthlyBudget === null ? (
+                <span className="text-2xl font-bold text-muted">未設定</span>
+              ) : (
+                <>
+                  <span
+                    className={`text-3xl font-bold ${isOverBudget ? "text-danger" : "text-foreground"}`}
+                  >
+                    残額: {remaining}円
+                  </span>
+                  <br />
+                  <span className="text-xs text-muted">
+                    （予算{monthlyBudget}円 − 支出{currentMonthTotal}円）
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {monthlyBudget !== null && (
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-background">
+          <div
+            className={`h-full rounded-full transition-all ${isOverBudget ? "bg-danger" : "bg-primary"}`}
+            style={{ width: `${usageRatio * 100}%` }}
+          />
+        </div>
       )}
-      <form className="mt-2 flex gap-2" onSubmit={handleSubmit}>
-        <input
-          data-testid="budget-input"
-          type="number"
-          min={1}
-          className="border rounded px-2 py-1 w-32"
-          placeholder="予算額(円)"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <button
-          data-testid="budget-submit"
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-black px-3 py-1 text-white disabled:opacity-50"
-        >
-          設定
-        </button>
+
+      <form className="mt-4 flex items-end gap-2 border-t border-border pt-4" onSubmit={handleSubmit}>
+        <div className="flex-1">
+          <Field label={monthlyBudget === null ? "月次予算を設定(円)" : "月次予算を変更(円)"}>
+            <Input
+              data-testid="budget-input"
+              type="number"
+              min={1}
+              placeholder="20000"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            />
+          </Field>
+        </div>
+        <Button data-testid="budget-submit" type="submit" loading={submitting}>
+          保存
+        </Button>
       </form>
-    </section>
+    </Card>
   );
 }
 
 function InviteSection({ groupId }: { groupId: string }) {
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleGenerate() {
-    const result = await postJson<{ inviteUrl: string }>(
-      `/api/groups/${groupId}/invite`,
-      {},
-    );
-    setInviteUrl(result.inviteUrl);
+    setLoading(true);
+    try {
+      const result = await postJson<{ inviteUrl: string }>(
+        `/api/groups/${groupId}/invite`,
+        {},
+      );
+      setInviteUrl(result.inviteUrl);
+      setCopied(false);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCopy() {
+    if (!inviteUrl) return;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setCopied(true);
+    } catch {
+      // クリップボードAPIが使えない環境では、URLをそのまま表示しているのでコピーは手動で行う
+    }
   }
 
   return (
-    <section className="rounded border p-4">
-      <h2 className="font-bold">招待リンク</h2>
-      <button
-        data-testid="invite-generate"
-        type="button"
-        onClick={handleGenerate}
-        className="mt-2 rounded bg-black px-3 py-1 text-white"
-      >
-        招待リンクを発行
-      </button>
+    <Card>
+      <CardTitle>パートナーを招待</CardTitle>
+      <p className="mb-3 text-sm text-muted">
+        招待リンクを共有すると、リンクを開いた人がこのグループに参加できます。
+      </p>
+      <Button variant="secondary" onClick={handleGenerate} loading={loading}>
+        <Link2 className="size-4" aria-hidden="true" />
+        <span data-testid="invite-generate">招待リンクを発行</span>
+      </Button>
       {inviteUrl && (
-        <p data-testid="invite-url" className="mt-2 break-all text-sm text-gray-700">
-          {inviteUrl}
-        </p>
+        <div className="mt-3 flex flex-col gap-2 rounded-lg bg-background p-3 sm:flex-row sm:items-center">
+          <p data-testid="invite-url" className="flex-1 break-all text-sm text-foreground">
+            {inviteUrl}
+          </p>
+          <Button variant="secondary" type="button" onClick={handleCopy} className="shrink-0">
+            {copied ? "コピーしました" : "コピー"}
+          </Button>
+        </div>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -204,69 +269,61 @@ function AddExpenseForm({
   }
 
   return (
-    <section className="rounded border p-4">
-      <h2 className="font-bold">支出を記録</h2>
-      <form className="mt-2 flex flex-wrap items-end gap-2" onSubmit={handleSubmit}>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm">金額</span>
-          <input
-            data-testid="expense-amount"
-            type="number"
-            min={1}
-            className="border rounded px-2 py-1 w-28"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm">内容</span>
-          <input
+    <Card>
+      <CardTitle>支出を記録</CardTitle>
+      <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="金額(円)">
+            <Input
+              data-testid="expense-amount"
+              type="number"
+              min={1}
+              placeholder="1500"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              required
+            />
+          </Field>
+          <Field label="支払者">
+            <Select
+              data-testid="expense-paid-by"
+              value={paidById}
+              onChange={(e) => setPaidById(e.target.value)}
+            >
+              {members.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.displayName}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+        <Field label="内容">
+          <Input
             data-testid="expense-description"
-            className="border rounded px-2 py-1"
+            placeholder="コンビニ、食費など"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm">支払者</span>
-          <select
-            data-testid="expense-paid-by"
-            className="border rounded px-2 py-1"
-            value={paidById}
-            onChange={(e) => setPaidById(e.target.value)}
-          >
-            {members.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.displayName}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm">支払い方法</span>
-          <select
+        </Field>
+        <Field label="支払い方法">
+          <Select
             data-testid="expense-payment-method"
-            className="border rounded px-2 py-1"
             value={paymentMethod}
             onChange={(e) => setPaymentMethod(e.target.value as "CASH" | "MOBILE")}
           >
             <option value="CASH">現金</option>
             <option value="MOBILE">モバイル決済</option>
-          </select>
-        </label>
-        <button
-          data-testid="expense-submit"
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-black px-3 py-2 text-white disabled:opacity-50"
-        >
-          追加
-        </button>
+          </Select>
+        </Field>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <Button data-testid="expense-submit" type="submit" loading={submitting}>
+          <Plus className="size-4" aria-hidden="true" />
+          記録する
+        </Button>
       </form>
-      {error && <p className="mt-2 text-red-600">{error}</p>}
-    </section>
+    </Card>
   );
 }
 
@@ -335,74 +392,102 @@ function ExpenseList({
     onChanged();
   }
 
-  const paymentMethodLabel = (method: "CASH" | "MOBILE") =>
-    method === "CASH" ? "現金" : "モバイル決済";
-
   return (
-    <section>
-      <h2 className="font-bold">支出一覧</h2>
+    <Card>
+      <CardTitle>支出一覧</CardTitle>
       {actionError && (
-        <p data-testid="expense-action-error" className="mt-2 text-red-600">
-          {actionError}
-        </p>
+        <div className="mb-3">
+          <ErrorMessage testId="expense-action-error">{actionError}</ErrorMessage>
+        </div>
       )}
-      <ul data-testid="expense-list" className="mt-2 flex flex-col gap-2">
+      <ul data-testid="expense-list" className="flex flex-col gap-2">
         {expenses.map((expense) => (
-          <li key={expense.id} className="flex items-center justify-between rounded border p-2">
+          <li
+            key={expense.id}
+            className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5"
+          >
             {editingId === expense.id ? (
-              <div className="flex items-center gap-2">
-                <input
+              <div className="flex flex-1 items-center gap-2">
+                <Input
                   data-testid="expense-edit-amount"
-                  className="border rounded px-2 py-1 w-24"
+                  className="w-24"
                   type="number"
                   value={editAmount}
                   onChange={(e) => setEditAmount(e.target.value)}
                 />
-                <button
+                <Button
                   data-testid="expense-edit-save"
                   type="button"
+                  variant="primary"
+                  className="px-3 py-1.5"
                   onClick={() => saveEdit(expense.id)}
-                  className="text-blue-600"
                 >
                   保存
-                </button>
-                <button type="button" onClick={() => setEditingId(null)} className="text-gray-500">
-                  取消
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setEditingId(null)}
+                  className="text-muted hover:text-foreground"
+                  aria-label="キャンセル"
+                >
+                  <X className="size-4" />
                 </button>
               </div>
             ) : (
-              <div>
-                <span className="font-bold">{expense.amount}円</span>
-                <span className="ml-2">{expense.description}</span>
-                <span className="ml-2 text-sm text-gray-500">
-                  {memberName(expense.paidById)} / {paymentMethodLabel(expense.paymentMethod)}
-                </span>
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <div
+                  className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
+                    expense.paymentMethod === "MOBILE"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300"
+                      : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+                  }`}
+                >
+                  <CreditCard className="size-4" aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">
+                    {expense.description}
+                    <span className="ml-2 font-bold">{expense.amount}円</span>
+                  </p>
+                  <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+                    <span className="truncate">{memberName(expense.paidById)}</span>
+                    <Badge tone={expense.paymentMethod === "MOBILE" ? "mobile" : "cash"}>
+                      {expense.paymentMethod === "MOBILE" ? "モバイル決済" : "現金"}
+                    </Badge>
+                  </p>
+                </div>
               </div>
             )}
             {editingId !== expense.id && (
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-1">
                 <button
                   data-testid="expense-edit-start"
                   type="button"
                   onClick={() => startEdit(expense)}
-                  className="text-blue-600"
+                  className="rounded-lg p-2 text-muted hover:bg-background hover:text-primary"
+                  aria-label="編集"
                 >
-                  編集
+                  <Pencil className="size-4" />
                 </button>
                 <button
                   data-testid="expense-delete"
                   type="button"
                   onClick={() => handleDelete(expense.id)}
-                  className="text-red-600"
+                  className="rounded-lg p-2 text-muted hover:bg-background hover:text-danger"
+                  aria-label="削除"
                 >
-                  削除
+                  <Trash2 className="size-4" />
                 </button>
               </div>
             )}
           </li>
         ))}
-        {expenses.length === 0 && <li className="text-gray-500">まだ支出記録がありません</li>}
+        {expenses.length === 0 && (
+          <li className="rounded-lg border border-dashed border-border py-6 text-center text-sm text-muted">
+            まだ支出記録がありません。上のフォームから最初の記録を追加しましょう。
+          </li>
+        )}
       </ul>
-    </section>
+    </Card>
   );
 }

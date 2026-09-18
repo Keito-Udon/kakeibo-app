@@ -1,7 +1,14 @@
 "use client";
 
+import { PiggyBank } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Field, Input } from "@/components/ui/field";
+import { ErrorMessage } from "@/components/ui/message";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -26,7 +33,11 @@ export default function SignupPage() {
 
     if (!res.ok) {
       const data = await res.json().catch(() => null);
-      setError(data?.error ?? "サインアップに失敗しました");
+      setError(
+        res.status === 409
+          ? "このメールアドレスは既に登録されています"
+          : (data?.error ?? "サインアップに失敗しました"),
+      );
       return;
     }
 
@@ -34,52 +45,60 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-4 p-8">
-      <h1 className="text-xl font-bold">アカウント作成</h1>
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-        <label className="flex flex-col gap-1">
-          <span>表示名</span>
-          <input
-            data-testid="signup-displayname"
-            className="border rounded px-2 py-1"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span>メールアドレス</span>
-          <input
-            data-testid="signup-email"
-            type="email"
-            className="border rounded px-2 py-1"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span>パスワード</span>
-          <input
-            data-testid="signup-password"
-            type="password"
-            className="border rounded px-2 py-1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-        </label>
-        {error && <p className="text-red-600">{error}</p>}
-        <button
-          data-testid="signup-submit"
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-black px-3 py-2 text-white disabled:opacity-50"
-        >
-          作成する
-        </button>
-      </form>
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-4 py-12">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+          <PiggyBank className="size-6" aria-hidden="true" />
+        </div>
+        <h1 className="text-xl font-bold">アカウント作成</h1>
+        <p className="text-sm text-muted">2人で使う共有家計簿をはじめましょう</p>
+      </div>
+
+      <Card className="w-full max-w-sm">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <Field label="表示名">
+            <Input
+              data-testid="signup-displayname"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="はなこ"
+              required
+            />
+          </Field>
+          <Field label="メールアドレス">
+            <Input
+              data-testid="signup-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+            />
+          </Field>
+          <Field label="パスワード">
+            <Input
+              data-testid="signup-password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="8文字以上"
+              required
+              minLength={8}
+            />
+          </Field>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <Button data-testid="signup-submit" type="submit" loading={submitting}>
+            アカウントを作成する
+          </Button>
+        </form>
+      </Card>
+
+      <p className="text-sm text-muted">
+        すでにアカウントをお持ちですか？{" "}
+        <Link href="/login" className="font-medium text-primary hover:underline">
+          ログイン
+        </Link>
+      </p>
     </main>
   );
 }

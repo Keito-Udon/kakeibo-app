@@ -13,7 +13,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-full flex flex-col">
+    <div className="flex min-h-dvh flex-col">
       <header className="flex justify-end p-4">
         <form
           action={async () => {

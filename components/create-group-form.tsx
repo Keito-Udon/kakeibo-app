@@ -1,8 +1,13 @@
 "use client";
 
+import { Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Field, Input } from "@/components/ui/field";
+import { ErrorMessage } from "@/components/ui/message";
 import { postJson } from "@/lib/fetcher";
 
 export function CreateGroupForm() {
@@ -26,32 +31,34 @@ export function CreateGroupForm() {
   }
 
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-4 p-8">
-      <h1 className="text-xl font-bold">グループを作成</h1>
-      <p className="text-sm text-gray-600">
-        まだどのグループにも参加していません。新しくグループを作成するか、パートナーからの招待リンクを開いてください。
-      </p>
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-        <label className="flex flex-col gap-1">
-          <span>グループ名</span>
-          <input
-            data-testid="create-group-name"
-            className="border rounded px-2 py-1"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        {error && <p className="text-red-600">{error}</p>}
-        <button
-          data-testid="create-group-submit"
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-black px-3 py-2 text-white disabled:opacity-50"
-        >
-          作成する
-        </button>
-      </form>
+    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-12">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+          <Users className="size-6" aria-hidden="true" />
+        </div>
+        <h1 className="text-xl font-bold">グループを作成</h1>
+        <p className="max-w-xs text-sm text-muted">
+          まだどのグループにも参加していません。新しくグループを作成するか、パートナーからの招待リンクを開いてください。
+        </p>
+      </div>
+
+      <Card className="w-full max-w-sm">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <Field label="グループ名">
+            <Input
+              data-testid="create-group-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="〇〇家"
+              required
+            />
+          </Field>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <Button data-testid="create-group-submit" type="submit" loading={submitting}>
+            作成する
+          </Button>
+        </form>
+      </Card>
     </main>
   );
 }
