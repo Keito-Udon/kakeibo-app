@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
+import { getAppOrigin } from "@/lib/app-url";
 import { prisma } from "@/lib/db";
 import { isGroupMember } from "@/lib/groups";
 import { logger } from "@/lib/logger";
@@ -33,7 +34,7 @@ export async function POST(
 
   logger.info("invite.issue", { groupId, userId: session.user.id });
 
-  const origin = new URL(request.url).origin;
+  const origin = getAppOrigin(request);
   return NextResponse.json(
     { token, inviteUrl: `${origin}/invite/${token}` },
     { status: 201 },
