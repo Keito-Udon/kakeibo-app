@@ -230,3 +230,9 @@ Task: "app/(auth)/login/page.tsx を実装"
 - [X] T044 `components/dashboard.tsx` の `saveEdit`・`handleDelete` で、PATCH/DELETEが404（対象が既に削除済み）を返した場合にユーザーへエラーメッセージを表示するようにする per Edge Cases: 編集中の削除競合 (partial)
 - [X] T045 メンバーBが既存の支出記録を編集・削除した際、メンバーAの画面に数秒以内に反映されることを検証するテストを追加する per US1/AC5 (missing)。`tests/e2e/expense-sharing.spec.ts`に編集・削除の検証を追加し成功を確認済み
 
+## Phase 8: Convergence
+
+`/speckit-converge` の2回目の評価で見つかった差分。Phase 7の3件はすべて解消済みと確認された。
+
+- [X] T046 ログアウト操作でセッションが失効し、`/login` にリダイレクトされることを検証するテストを追加する per FR-002 (missing)。`tests/e2e/logout.spec.ts`を追加し成功を確認済み
+
