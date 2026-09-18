@@ -1,50 +1,115 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: (template) → 1.0.0
+- Modified principles: 初回制定のため該当なし（テンプレートのプレースホルダーを具体化）
+  - I. シンプルさとYAGNI（新規）
+  - II. テストファースト（絶対厳守）（新規）
+  - III. 仕様駆動のトレーサビリティ（新規）
+  - IV. 反復的でレビュー可能なデリバリー（新規）
+  - V. 可観測性とデバッグ容易性（新規）
+- Added sections: 追加の制約（技術スタック）、開発ワークフロー、ガバナンス
+- Removed sections: なし
+- Follow-up TODOs: なし（本プロジェクトの技術スタックはこの時点で確定済み）
+-->
 
-## Core Principles
+# kakeibo-app 憲法
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+## 中核原則
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### I. シンプルさとYAGNI
+すべての変更は、いま目の前にある問題だけを解決しなければならない（MUST）。将来起こるかもしれない
+ニーズのために抽象化・設定オプション・インフラを構築してはならない（MUST NOT）。現在の仕様を満たす
+最小の設計を優先すること。似たようなコードが3行あるほうが、早すぎる抽象化よりも望ましい。複雑さ
+（新しい層、依存関係、サービス、パターンの追加）を導入する場合は、想定される将来の再利用ではなく、
+現在の具体的な要件によってプランの中で正当化されなければならない（MUST）。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**根拠**: 使われない柔軟性は、見返りのない保守コストでしかない。個人開発・少人数利用の家計簿アプリ
+において、システムを最小限に保つことは、仮説上の将来のケースを網羅することよりも重要な
+「変更しやすさ」を維持する。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. テストファースト（絶対厳守）
+仕様に記述された挙動については、その挙動を検証するテストが実装の前に（または実装と同時に）
+存在しなければならず（MUST）、その実装が行われる前は失敗する状態でなければならない（MUST）。
+バグ修正には、そのバグを再現する回帰テストを含めなければならない（MUST）。テストはタスクの
+「完了」を定義する実行可能な基準である。検証手段のないタスクは完了とはみなされない。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+**根拠**: 仕様駆動開発が機能するのは、仕様が検証可能である場合に限られる。テストこそが、
+仕様を単なる文書から検証可能な契約へと変えるものであり、複数人が共有する家計簿データの整合性
+（例: 合計金額のずれ、権限のないメンバーによる編集）を壊さずに変更を続けるための拠り所となる。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### III. 仕様駆動のトレーサビリティ
+些細でない機能はすべて仕様（`/speckit-specify`）に由来し、対応するプランおよびタスクの
+成果物を通じて実装されなければならない（MUST）。実装は、仕様に遡れない要件を持ち込んでは
+ならない（MUST NOT）。実装途中で新たな必要事項が判明した場合は、それを黙って実装に組み込む
+のではなく、まず仕様を更新するか、明示的に食い違いとしてフラグを立てなければならない（MUST）。
+曖昧な点は推測で埋めるのではなく `/speckit-clarify` を通じて解消しなければならない（MUST）。
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+**根拠**: このワークフローの価値は、「何を」「なぜ」作るかについての単一の真実の源泉である
+ことにある。仕様を更新せずにコードだけが仕様から乖離していくと、次にそれを見る人（未来の
+自分を含む）にとってその価値が失われる。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### IV. 反復的でレビュー可能なデリバリー
+作業は、機能単位ではなくタスク単位の、小さく独立してレビュー可能な単位で提供されなければ
+ならない（MUST）。各単位は、テストが通り、未完成の実装が残っていない、動作する状態でシステムを
+残さなければならない（MUST）。大規模または曖昧な作業は、ひとまとまりの未分化な作業として着手
+するのではなく、実装前に `/speckit-tasks` によって分解されなければならない（MUST）。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**根拠**: 小さな単位は、レビューしやすく、取り消しやすく、問題が積み重なる前に発見しやすい。
+大規模なレビュー体制を持たない個人開発では、一括りの大きな変更を防ぐこの原則が特に重要になる。
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+### V. 可観測性とデバッグ容易性
+エラーは、デバッガで再実行しなくても診断できるだけの文脈（何が、どの入力で、どこで失敗したか）
+とともに表面化しなければならない（MUST）。エラー・ログ出力は、暗黙的な失敗や例外の握りつぶし
+よりも、明示的で構造化された形を優先すること。挙動は、ログ・出力と仕様から説明可能でなければ
+ならない（MUST）。失敗の理解のために実装のソースコードを唯一の情報源として読まねばならない
+場合、それは埋めるべきギャップである。
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**根拠**: このプロジェクトは一人の開発者がAI支援開発を用いて構築・反復していく。迅速かつ
+自己説明的な失敗診断が、より大きなチームであれば存在するはずの暗黙知の代わりを果たす。特に
+共有データを扱うアプリでは、「誰の操作でどう状態が変わったか」を追えることが重要になる。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+## 追加の制約
+
+技術スタックは以下の通り確定している。`/speckit-plan` はこの制約に従い、逸脱する場合はプランの
+「複雑さの追跡」セクションで明示的に正当化しなければならない（MUST）。
+
+- **フロントエンド/バックエンド**: Next.js（App Router, TypeScript）によるフルスタック構成。
+  API Routes / Server Actions でバックエンドロジックを実装し、別プロセスのバックエンドは
+  設けない（原則Iのシンプルさ・YAGNIに従う）。
+- **DB**: SQLite。ORMには Prisma を用いる。個人・少人数（世帯/グループ）利用を前提とした
+  規模であり、複数デバイス同時アクセスが本格的に増えた場合にのみ Postgres 等への移行を
+  プランとして検討する。
+- **配布形態**: PWA（Webアプリ）。iOS/Androidともブラウザからのホーム画面追加でカバーし、
+  ネイティブアプリのビルド・審査は行わない。
+- **共有モデル**: アカウントログイン＋グループ招待。ユーザーはアカウントを作成してログインし、
+  グループ（世帯）を作成または招待されて参加する。グループ内のメンバーが共通の支出記録を
+  編集できる。
+
+## 開発ワークフロー
+
+標準の6段階フロー（`/speckit-constitution` → `/speckit-specify` → `/speckit-plan` →
+`/speckit-tasks` → `/speckit-implement` → `/speckit-converge`）は、些細でない機能については
+この順序で行わなければならず（MUST）、段階を飛ばしてはならない（MUST NOT）（例: 仕様が
+存在しない状態で `/speckit-plan` に進むこと）。仕様に未確定の要件が残っている場合は、
+プランニングの前に `/speckit-clarify` で曖昧さを解消しなければならない（MUST）。
+`/speckit-analyze` と `/speckit-checklist` は横断的な品質ゲートとして利用可能であり、
+複数のユーザーストーリーやコンポーネントにまたがる仕様を持つ機能では、`/speckit-implement`
+の前に使用すべきである（SHOULD）。
+
+## ガバナンス
+
+この憲法は、本プロジェクトにおける他の非公式な慣行に優先する。改訂は `/speckit-constitution`
+を通じて行い、セマンティックバージョニングに従ってバージョンを更新しなければならない（MUST）。
+- **MAJOR**: 原則やガバナンス規則の後方互換性のない削除・再定義。
+- **MINOR**: 新しい原則やセクションの追加、または既存のガイダンスの実質的な拡張。
+- **PATCH**: 文言の明確化、誤字修正、その他意味に影響しない修正。
+
+すべての改訂は、変更日をもって「最終改訂日」を更新しなければならず（MUST）、変更内容と理由を
+記述した同期影響レポート（Sync Impact Report）を、このファイル冒頭のHTMLコメントとして含め
+なければならない（MUST）。`/speckit-plan` と `/speckit-tasks` によって作成されたフィーチャーの
+プラン・タスクは、これらの原則への準拠を確認しなければならず（MUST）、逸脱がある場合は、
+黙って持ち込むのではなく、その機能のプラン内（例: 「複雑さの追跡」セクション）で明示的に
+正当化しなければならない（MUST）。レビューの際は、会話履歴ではなくこのファイルをプロジェクト
+原則の正式な情報源として用いること。
+
+**バージョン**: 1.0.0 | **制定日**: 2026-09-18 | **最終改訂日**: 2026-09-18
