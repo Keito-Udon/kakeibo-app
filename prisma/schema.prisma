@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentMethod {
+  CASH
+  MOBILE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime @default(now())
+
+  memberships       GroupMember[]
+  createdInvites    InviteToken[]   @relation("InviteCreatedBy")
+  paidExpenses      ExpenseRecord[] @relation("ExpensePaidBy")
+  createdExpenses   ExpenseRecord[] @relation("ExpenseCreatedBy")
+  updatedExpenses   ExpenseRecord[] @relation("ExpenseUpdatedBy")
+}
+
+model Group {
+  id             String   @id @default(cuid())
+  name           String
+  monthlyBudget  Int?
+  createdAt      DateTime @default(now())
+
+  members  GroupMember[]
+  invites  InviteToken[]
+  expenses ExpenseRecord[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  userId   String
+  groupId  String
+  joinedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+}
+
+model InviteToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  groupId   String
+  createdBy String
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  group   Group @relation(fields: [groupId], references: [id])
+  creator User  @relation("InviteCreatedBy", fields: [createdBy], references: [id])
+}
+
+model ExpenseRecord {
+  id            String        @id @default(cuid())
+  groupId       String
+  amount        Int
+  description   String
+  paidById      String
+  paymentMethod PaymentMethod
+  createdById   String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  updatedById   String?
+
+  group     Group @relation(fields: [groupId], references: [id])
+  paidBy    User  @relation("ExpensePaidBy", fields: [paidById], references: [id])
+  createdBy User  @relation("ExpenseCreatedBy", fields: [createdById], references: [id])
+  updatedBy User? @relation("ExpenseUpdatedBy", fields: [updatedById], references: [id])
+}

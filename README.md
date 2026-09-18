@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# kakeibo-app
 
-## Getting Started
+半同棲・新婚カップル(2人)が、共有財布の支出を記録・共有できるWebアプリ。spec-kitのワークフロー
+（`.specify/`）を使って仕様駆動で開発している。詳細は以下を参照:
 
-First, run the development server:
+- 企画検討メモ: [`docs/project-plan.md`](docs/project-plan.md)
+- 機能仕様: [`specs/001-shared-budget/spec.md`](specs/001-shared-budget/spec.md)
+- 実装プラン: [`specs/001-shared-budget/plan.md`](specs/001-shared-budget/plan.md)
+
+## セットアップ
+
+```bash
+npm install
+cp .env.example .env
+# .env の AUTH_SECRET を生成して設定する
+openssl rand -base64 32
+npx prisma migrate dev --name init
+```
+
+## 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) を開く。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## テスト
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# ユニットテスト（Vitest）
+npm run test
 
-## Learn More
+# E2Eテスト（Playwright。初回は `npx playwright install chromium` が必要）
+npm run test:e2e
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Lint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 技術スタック
 
-## Deploy on Vercel
+- Next.js（App Router, TypeScript）フルスタック
+- Prisma 6.19.3 + SQLite
+- Auth.js（next-auth v5, Credentials Provider）
+- SWR（ショートポーリングによる準リアルタイム同期）
+- Vitest（ユニットテスト） / Playwright（E2Eテスト）
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+選定理由の詳細は [`specs/001-shared-budget/research.md`](specs/001-shared-budget/research.md) を参照。
