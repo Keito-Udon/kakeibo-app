@@ -55,8 +55,15 @@ export function MonthCalendar({
           >
             <ChevronLeft className="size-5" aria-hidden="true" />
           </Link>
-          <h1 data-testid="calendar-year-month" className="text-xl font-bold text-foreground">
-            {formatYearMonth(yearMonth)}
+          {/* 年月をタップするとその月の予算変更画面へ（FR-006） */}
+          <h1 className="text-xl font-bold text-foreground">
+            <Link
+              data-testid="calendar-year-month"
+              href={`/months/${yearMonth}/budget`}
+              className="rounded-lg px-2 py-1 underline-offset-4 hover:underline"
+            >
+              {formatYearMonth(yearMonth)}
+            </Link>
           </h1>
           <Link
             data-testid="calendar-next"

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { createGroup, signupAndLogin, uniqueEmail } from "./helpers";
+import { createGroupWithBudget, signupAndLogin, uniqueEmail } from "./helpers";
 
 // User Story 1 (P1): 支出の記録とグループ共有閲覧
 // quickstart.md シナリオ1〜4に対応する一連のフロー。
@@ -11,7 +11,8 @@ test("2人のユーザーがグループを共有し、支出記録が数秒以�
   await signupAndLogin(pageA, uniqueEmail("a"), "ユーザーA");
 
   // グループ作成（User Story 1, acceptance scenario 1の前提）
-  await createGroup(pageA, "テスト家計簿");
+  await createGroupWithBudget(pageA, "テスト家計簿", 20000);
+  await pageA.goto("/");
   await expect(pageA.getByTestId("group-name")).toHaveText("テスト家計簿");
 
   // 招待リンクを発行（FR-014）

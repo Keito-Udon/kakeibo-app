@@ -1,13 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-import { createGroup, signupAndLogin, uniqueEmail } from "./helpers";
+import { createGroupWithBudget, signupAndLogin, uniqueEmail } from "./helpers";
 
 // User Story 2 (P2): 月次予算残額の可視化（quickstart.md シナリオ5）
 
 test("月次予算に対する残額が正しく表示され、超過時はマイナス表示になる", async ({ page }) => {
   await signupAndLogin(page, uniqueEmail("budget"), "予算太郎");
 
-  await createGroup(page, "予算テストグループ");
+  // グループ作成後の初回予算決定を済ませてから、旧画面（/）で予算を設定し直す
+  await createGroupWithBudget(page, "予算テストグループ", 1);
+  await page.goto("/");
   await expect(page.getByTestId("group-name")).toHaveText("予算テストグループ");
 
   // 予算20,000円を設定（FR-008）

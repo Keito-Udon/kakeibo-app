@@ -1,4 +1,6 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
+
+import { currentYearMonthJst } from "../../lib/date";
 
 export const PASSWORD = "password123";
 
@@ -33,4 +35,46 @@ export async function signupAndLogin(page: Page, email: string, displayName: str
 export async function createGroup(page: Page, name: string) {
   await page.getByTestId("create-group-name").fill(name);
   await page.getByTestId("create-group-submit").click();
+}
+
+// グループを作り、続けて表示される予算画面（初回）で今月の設定額を保存する。カレンダーに着いて終わる
+export async function createGroupWithBudget(page: Page, name: string, amount: number) {
+  const thisMonth = currentYearMonthJst();
+  await createGroup(page, name);
+  await page.waitForURL(`/months/${thisMonth}/budget`);
+  await page.getByTestId("budget-form-amount").fill(String(amount));
+  await page.getByTestId("budget-form-submit").click();
+  await page.waitForURL(`/months/${thisMonth}`);
+}
+
+export async function currentUserId(page: Page): Promise<string> {
+  const session = await (await page.request.get("/api/auth/session")).json();
+  return session.user.id;
+}
+
+// カレンダーの data-group-id から選択中グループのIDを読む
+export async function groupIdOnCalendar(page: Page): Promise<string> {
+  const groupId = await page.getByTestId("calendar").getAttribute("data-group-id");
+  expect(groupId).toBeTruthy();
+  return groupId!;
+}
+
+export async function addExpenseViaApi(
+  page: Page,
+  groupId: string,
+  amount: number,
+  spentOn: string,
+  description = `支出 ${spentOn}`,
+) {
+  const response = await page.request.post(`/api/groups/${groupId}/expenses`, {
+    data: {
+      amount,
+      description,
+      paidById: await currentUserId(page),
+      paymentMethod: "CASH",
+      spentOn,
+    },
+  });
+  expect(response.status()).toBe(201);
+  return response.json();
 }

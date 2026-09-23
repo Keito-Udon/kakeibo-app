@@ -120,18 +120,18 @@
 
 ### Tests for User Story 2（実装前に作成し、失敗することを確認する）
 
-- [ ] T027 [P] [US2] `tests/e2e/first-run.spec.ts` を作成する（quickstart.md シナリオ1、US2 AC1〜2）: サインアップ・ログイン → グループ作成 → `budget-form` が表示され、初回の見出し「予算を決める」があり `budget-form-back` がないこと → `/months/{今月}` を直接開くと予算画面に戻されること → `budget-form-amount` に20000を入れて `budget-form-submit` → URLが `/months/{今月}` になり `calendar-remaining` が `20,000円` → ログアウト・再ログインで予算画面を経由しない（URLに `/budget` を含まない）こと
-- [ ] T028 [P] [US2] `tests/e2e/budget-carryover.spec.ts` を作成する（quickstart.md シナリオ4、US2 AC4〜9）: `calendar-year-month` をタップすると今月の予算画面に移り、設定額20,000と繰越0（`budget-form-carryover`）が表示される → 翌月に移動し設定額を25,000に変更すると、翌月の予算が25,000＋今月の残額になり、今月の設定額は20,000のまま → APIで今月の支出を合計23,000円にすると、今月の `calendar-remaining` がマイナス（赤字）の `-3,000円`、翌月が `22,000円` になる → 予算画面で0を保存しようとするとエラーが表示され保存されない
+- [X] T027 [P] [US2] `tests/e2e/first-run.spec.ts` を作成する（quickstart.md シナリオ1、US2 AC1〜2）: サインアップ・ログイン → グループ作成 → `budget-form` が表示され、初回の見出し「予算を決める」があり `budget-form-back` がないこと → `/months/{今月}` を直接開くと予算画面に戻されること → `budget-form-amount` に20000を入れて `budget-form-submit` → URLが `/months/{今月}` になり `calendar-remaining` が `20,000円` → ログアウト・再ログインで予算画面を経由しない（URLに `/budget` を含まない）こと
+- [X] T028 [P] [US2] `tests/e2e/budget-carryover.spec.ts` を作成する（quickstart.md シナリオ4、US2 AC4〜9）: `calendar-year-month` をタップすると今月の予算画面に移り、設定額20,000と繰越0（`budget-form-carryover`）が表示される → 翌月に移動し設定額を25,000に変更すると、翌月の予算が25,000＋今月の残額になり、今月の設定額は20,000のまま → APIで今月の支出を合計23,000円にすると、今月の `calendar-remaining` がマイナス（赤字）の `-3,000円`、翌月が `22,000円` になる → 予算画面で0を保存しようとするとエラーが表示され保存されない
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] `app/api/groups/[groupId]/months/[yearMonth]/budget/route.ts` に PUT を実装する: 未認証401、非メンバー403、`yearMonth` 形式不正または `monthlyBudgetInputSchema` 不合格（`amount` は1以上の整数）で400、成功時は `setMonthlyBudget` を呼んで `{ yearMonth, amount }` を返す（contracts/api.md）
-- [ ] T030 [US2] `components/budget-form.tsx` を作成する（クライアントコンポーネント）: 年月の見出し、設定額の入力（`budget-form-amount`、初期値は引き継ぎ後の設定額。未設定なら空）、前月からの繰越額（`budget-form-carryover`）、保存ボタン（`budget-form-submit`）、エラー表示。初回モードでは見出しを「予算を決める」にし、戻るリンク（`budget-form-back` → `/months/{yearMonth}`）を表示しない。保存に成功したら SWR の `mutate` で `/months/{yearMonth}` のキャッシュを無効化し、`router.push("/months/{yearMonth}")` する（contracts/screens.md「予算決定・変更」）
-- [ ] T031 [US2] `app/(dashboard)/months/[yearMonth]/budget/page.tsx` を作成する: `yearMonth` を検証（不正なら `notFound()`）、`requireActiveGroup()` で選択中グループを取得（予算未設定でも開ける）、`getMonthSummary` で現在の設定額と繰越を読み、`hasAnyBudget` が false なら初回モードで `BudgetForm` を表示する（T029, T030に依存）
-- [ ] T032 [US2] `components/month-calendar.tsx` の年月表示（`calendar-year-month`）を `/months/{yearMonth}/budget` へのリンクにする（FR-006）
-- [ ] T033 [US2] `app/(dashboard)/page.tsx` の振り分けを更新する: 選択中グループに予算が1件もなければ `/months/{今月}/budget` へ `redirect()` する。未所属のときのグループ作成フォームと、予算設定済みのときの旧画面表示はこのフェーズでは変えない（FR-001の(2)）
-- [ ] T034 [US2] `tests/e2e/helpers.ts` に「グループを作成し、表示された予算画面で初回の予算を保存する」手順 `createGroupWithBudget(page, name, amount)` を追加し、旧画面のE2E 4本と `calendar.spec.ts` をこの手順を使う形に更新する（グループ作成直後に予算画面が挟まるようになったため）
-- [ ] T035 [US2] T027・T028 と、既存のE2E（旧画面4本・`calendar.spec.ts`）がすべて成功することを確認する
+- [X] T029 [US2] `app/api/groups/[groupId]/months/[yearMonth]/budget/route.ts` に PUT を実装する: 未認証401、非メンバー403、`yearMonth` 形式不正または `monthlyBudgetInputSchema` 不合格（`amount` は1以上の整数）で400、成功時は `setMonthlyBudget` を呼んで `{ yearMonth, amount }` を返す（contracts/api.md）
+- [X] T030 [US2] `components/budget-form.tsx` を作成する（クライアントコンポーネント）: 年月の見出し、設定額の入力（`budget-form-amount`、初期値は引き継ぎ後の設定額。未設定なら空）、前月からの繰越額（`budget-form-carryover`）、保存ボタン（`budget-form-submit`）、エラー表示。初回モードでは見出しを「予算を決める」にし、戻るリンク（`budget-form-back` → `/months/{yearMonth}`）を表示しない。保存に成功したら SWR の `mutate` で `/months/{yearMonth}` のキャッシュを無効化し、`router.push("/months/{yearMonth}")` する（contracts/screens.md「予算決定・変更」）
+- [X] T031 [US2] `app/(dashboard)/months/[yearMonth]/budget/page.tsx` を作成する: `yearMonth` を検証（不正なら `notFound()`）、`requireActiveGroup()` で選択中グループを取得（予算未設定でも開ける）、`getMonthSummary` で現在の設定額と繰越を読み、`hasAnyBudget` が false なら初回モードで `BudgetForm` を表示する（T029, T030に依存）
+- [X] T032 [US2] `components/month-calendar.tsx` の年月表示（`calendar-year-month`）を `/months/{yearMonth}/budget` へのリンクにする（FR-006）
+- [X] T033 [US2] `app/(dashboard)/page.tsx` の振り分けを更新する: 選択中グループに予算が1件もなければ `/months/{今月}/budget` へ `redirect()` する。未所属のときのグループ作成フォームと、予算設定済みのときの旧画面表示はこのフェーズでは変えない（FR-001の(2)）
+- [X] T034 [US2] `tests/e2e/helpers.ts` に「グループを作成し、表示された予算画面で初回の予算を保存する」手順 `createGroupWithBudget(page, name, amount)` を追加し、旧画面のE2E 4本と `calendar.spec.ts` をこの手順を使う形に更新する（グループ作成直後に予算画面が挟まるようになったため）
+- [X] T035 [US2] T027・T028 と、既存のE2E（旧画面4本・`calendar.spec.ts`）がすべて成功することを確認する
 
 **Checkpoint**: 初回の予算決定の流れと月ごとの予算変更・繰越が動く。カレンダー（US1）と組み合わせて
 主要な表示がそろう

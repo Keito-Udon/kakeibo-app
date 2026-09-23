@@ -1,27 +1,15 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 import { addMonths, currentYearMonthJst } from "../../lib/date";
-import { createGroup, signupAndLogin, uniqueEmail } from "./helpers";
+import {
+  addExpenseViaApi as addExpense,
+  createGroupWithBudget,
+  groupIdOnCalendar,
+  signupAndLogin,
+  uniqueEmail,
+} from "./helpers";
 
 // User Story 1 (P1): カレンダーで月の支出を把握する（quickstart.md シナリオ2）
-
-async function currentUserId(page: Page): Promise<string> {
-  const session = await (await page.request.get("/api/auth/session")).json();
-  return session.user.id;
-}
-
-async function addExpense(page: Page, groupId: string, amount: number, spentOn: string) {
-  const response = await page.request.post(`/api/groups/${groupId}/expenses`, {
-    data: {
-      amount,
-      description: `支出 ${spentOn}`,
-      paidById: await currentUserId(page),
-      paymentMethod: "CASH",
-      spentOn,
-    },
-  });
-  expect(response.status()).toBe(201);
-}
 
 test("カレンダーに日別合計・残額が表示され、月を移動でき、変更が自動で反映される", async ({
   page,
@@ -30,16 +18,8 @@ test("カレンダーに日別合計・残額が表示され、月を移動で�
   const thisMonth = currentYearMonthJst();
 
   await signupAndLogin(page, uniqueEmail("calendar"), "カレンダー太郎");
-  await createGroup(page, "カレンダーテスト");
-  // US1の時点では予算画面がないため、旧画面で今月の予算を設定する（T034で置き換え）
-  await page.getByTestId("budget-input").fill("20000");
-  await page.getByTestId("budget-submit").click();
-  await expect(page.getByTestId("budget-remaining")).toContainText("20000");
-
-  await page.goto(`/months/${thisMonth}`);
-  const calendar = page.getByTestId("calendar");
-  const groupId = (await calendar.getAttribute("data-group-id"))!;
-  expect(groupId).toBeTruthy();
+  await createGroupWithBudget(page, "カレンダーテスト", 20000);
+  const groupId = await groupIdOnCalendar(page);
 
   await addExpense(page, groupId, 1000, `${thisMonth}-05`);
   await addExpense(page, groupId, 500, `${thisMonth}-05`);
