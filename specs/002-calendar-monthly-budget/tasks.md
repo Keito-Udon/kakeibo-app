@@ -309,3 +309,9 @@ Task: "lib/format.ts に formatDayAmount / formatYen を実装"
 
 - [X] T073 CRITICAL: `tests/e2e/day-detail.spec.ts`（または新規の `tests/e2e/authorization.spec.ts`）に、グループのメンバーでないユーザーのIDを `paidById` にした `POST /api/groups/{groupId}/expenses` と `PATCH /api/groups/{groupId}/expenses/{expenseId}` がどちらも400を返し、支出が追加・変更されない（日別APIの結果が変わらない）ことの検証を追加する per Constitution II / FR-017 (partial)
 - [X] T074 CRITICAL: グループ外のユーザーが、(a) `PUT /api/groups/{groupId}/months/{今月}/budget` を送ると403で設定額が変わらない、(b) `POST /api/groups/{groupId}/expenses` を送ると403で支出が増えない、(c) 他のグループの支出の `/expenses/{expenseId}/edit` を開くと404（「ページが見つからない」表示）になることを、E2Eで検証する per Constitution II / Edge Cases「グループ外のユーザーのアクセスは拒否」 (partial)
+
+## Phase 10: Convergence
+
+3回目の `/speckit-converge` で見つかった差分。Phase 9 の2件は解消済み。T059 で `expense-sharing.spec.ts` を書き直した際に、001 で検証していた「他のメンバーが追加した支出の編集・削除」の観点が失われていた。
+
+- [X] T075 CRITICAL: `tests/e2e/expense-sharing.spec.ts` に、メンバーBが、メンバーAの追加した支出を日別詳細の画面（`day-expense-edit` → 支出編集画面、`day-expense-delete`）から編集・削除でき、その変更がAのカレンダーの日別合計と残額に数秒以内に反映されることの検証を追加する per Constitution II / FR-030（001のFR-012） (partial)
