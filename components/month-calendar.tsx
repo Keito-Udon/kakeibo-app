@@ -42,7 +42,7 @@ export function MonthCalendar({
     <main
       data-testid="calendar"
       data-group-id={groupId}
-      className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-4 pb-12 pt-4"
+      className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-2 pb-12 pt-4 sm:px-4"
     >
       <header className="flex flex-col gap-1">
         <div className="flex items-center justify-between gap-2">
@@ -103,9 +103,13 @@ export function MonthCalendar({
       </header>
 
       {/* 表示中の月の状況: 左にメンバーごとの支払額（003 FR-004）、右に日付ごとの支出 */}
-      <div className="flex gap-2">
+      {/* スマホでも左の列と日付マスの金額が両方読める配置（research.md #1） */}
+      <div className="flex gap-1 sm:gap-3">
         <MemberSpending memberTotals={data?.memberTotals} />
-        <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+        <div
+          data-testid="calendar-grid"
+          className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-surface shadow-sm"
+        >
           <div className="grid grid-cols-7 border-b border-border text-center text-xs text-muted">
             {WEEKDAYS.map((weekday, i) => (
               <div
@@ -162,7 +166,7 @@ function DayCell({
     <Link
       data-testid={`calendar-day-${date}`}
       href={`/days/${date}`}
-      className="flex min-h-16 flex-col items-center gap-1 border-r border-border p-1 last:border-r-0 hover:bg-background"
+      className="flex min-h-16 min-w-0 flex-col items-center gap-1 border-r border-border p-0.5 last:border-r-0 hover:bg-background"
     >
       <span
         className={`flex size-6 items-center justify-center rounded-full text-xs ${
@@ -174,7 +178,7 @@ function DayCell({
       {amount !== undefined && (
         <span
           data-testid={`calendar-day-amount-${date}`}
-          className="text-[11px] font-medium text-foreground"
+          className="whitespace-nowrap text-[10px] font-medium tracking-tighter text-foreground sm:text-[11px] sm:tracking-normal"
         >
           {formatDayAmount(amount)}
         </span>

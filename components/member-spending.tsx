@@ -21,10 +21,11 @@ const BAR_COLORS = [
   "bg-orange-500",
 ];
 
-// カレンダーの左に置く、メンバーごとの支払額と割合（contracts/screens.md）。名前と金額は省略しない
+// カレンダーの左に置く、メンバーごとの支払額と割合（contracts/screens.md）。名前と金額は省略しない。
+// 幅はスマホで88px、640px以上で176px（research.md #1 の計測結果）
 export function MemberSpending({ memberTotals }: { memberTotals: MemberTotal[] | undefined }) {
   return (
-    <aside data-testid="member-spending" className="flex w-44 shrink-0 flex-col gap-2">
+    <aside data-testid="member-spending" className="flex w-[88px] shrink-0 flex-col gap-2 sm:w-44">
       {memberTotals?.map((member) => (
         <div
           key={member.userId}

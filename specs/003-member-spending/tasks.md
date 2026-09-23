@@ -64,12 +64,12 @@ A 3,000円・75%、B 1,000円・25%が表示されることを確認する（qui
 
 ### Tests for User Story 2（実装前に作成し、失敗することを確認する）
 
-- [ ] T009 [US2] `tests/e2e/member-spending.spec.ts` に配置のテストを追加する（quickstart.md シナリオ4）: ユーザーA（今月の支払額123,456円。1日にまとめず、日別合計が「9,999」「3,480」「1,200」「1.3万」になる日を含める）と、表示名20文字のユーザーB（例: 「とても長い表示名のメンバーさんです」、今月の支払額1,234,567円＝7桁。Edge Cases）を用意し、ビューポート幅390pxと360px（高さ760px）それぞれで、(a) `member-spending-name` のテキストが各表示名と完全一致し、`member-spending-amount` が「123,456円」「1,234,567円」と完全一致する、(b) すべての `calendar-day-amount-*` 要素について `scrollWidth` が親のマス（`calendar-day-*`）の `clientWidth` を超えない、(c) `document.documentElement.scrollWidth` が `window.innerWidth` を超えない（横スクロールなし）、(d) `member-spending` の右端（`boundingBox` の x + width）がカレンダーのグリッドの左端以下にある（左側に置く。FR-004）、を検証する。さらに幅1024pxで (d) と、`member-spending` の幅が176pxであること（640px以上の配置。research.md #1）を検証する。US1の固定幅（176px）のままでは390px・360pxで失敗することを確認する
+- [X] T009 [US2] `tests/e2e/member-spending.spec.ts` に配置のテストを追加する（quickstart.md シナリオ4）: ユーザーA（今月の支払額123,456円。1日にまとめず、日別合計が「9,999」「3,480」「1,200」「1.3万」になる日を含める）と、表示名20文字のユーザーB（例: 「とても長い表示名のメンバーさんです」、今月の支払額1,234,567円＝7桁。Edge Cases）を用意し、ビューポート幅390pxと360px（高さ760px）それぞれで、(a) `member-spending-name` のテキストが各表示名と完全一致し、`member-spending-amount` が「123,456円」「1,234,567円」と完全一致する、(b) すべての `calendar-day-amount-*` 要素について `scrollWidth` が親のマス（`calendar-day-*`）の `clientWidth` を超えない、(c) `document.documentElement.scrollWidth` が `window.innerWidth` を超えない（横スクロールなし）、(d) `member-spending` の右端（`boundingBox` の x + width）がカレンダーのグリッドの左端以下にある（左側に置く。FR-004）、を検証する。さらに幅1024pxで (d) と、`member-spending` の幅が176pxであること（640px以上の配置。research.md #1）を検証する。US1の固定幅（176px）のままでは390px・360pxで失敗することを確認する
 
 ### Implementation for User Story 2
 
-- [ ] T010 [US2] research.md #1 の表のとおりに、画面幅640px未満と以上で配置を切り替える: `components/member-spending.tsx` の列幅を `w-[88px] sm:w-44`、`components/month-calendar.tsx` の左の列とカレンダーの間を `gap-1 sm:gap-3`、画面の左右の余白を `px-2 sm:px-4`、日付マスの金額（`calendar-day-amount-*`）の文字を `text-[10px] tracking-tighter sm:text-[11px] sm:tracking-normal`、日付マスに `min-w-0` と `p-0.5` を指定する（T009を通す）
-- [ ] T011 [US2] T009 と既存のテストがすべて成功することを確認する
+- [X] T010 [US2] research.md #1 の表のとおりに、画面幅640px未満と以上で配置を切り替える: `components/member-spending.tsx` の列幅を `w-[88px] sm:w-44`、`components/month-calendar.tsx` の左の列とカレンダーの間を `gap-1 sm:gap-3`、画面の左右の余白を `px-2 sm:px-4`、日付マスの金額（`calendar-day-amount-*`）の文字を `text-[10px] tracking-tighter sm:text-[11px] sm:tracking-normal`、日付マスに `min-w-0` と `p-0.5` を指定する（T009を通す）
+- [X] T011 [US2] T009 と既存のテストがすべて成功することを確認する
 
 **Checkpoint**: スマホの幅でも、左の列とカレンダーが両方とも省略・はみ出しなく読める
 

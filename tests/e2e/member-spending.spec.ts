@@ -95,3 +95,85 @@ test("カレンダーの左に、支払者ごとの支払額と割合が表示�
 
   await contextB.close();
 });
+
+// 003 User Story 2: 狭い画面でも、名前と金額を省略せず、日付マスの金額もはみ出さない（quickstart.md シナリオ4）
+test("スマホの幅でも左の列とカレンダーが両方とも省略・はみ出しなく読める", async ({ page, browser }) => {
+  const thisMonth = currentYearMonthJst();
+  const longName = "とても長い表示名のメンバーさんですよね！"; // 20文字
+
+  await signupAndLogin(page, uniqueEmail("layout-a"), "レイアウトA");
+  await createGroupWithBudget(page, "配置テスト", 20000);
+  const groupId = await groupIdOnCalendar(page);
+  const aId = await currentUserId(page);
+  const invite = await (await page.request.post(`/api/groups/${groupId}/invite`)).json();
+
+  const contextB = await browser.newContext();
+  const pageB = await contextB.newPage();
+  await signupAndLogin(pageB, uniqueEmail("layout-b"), longName);
+  await pageB.goto(new URL(invite.inviteUrl).pathname);
+  await pageB.waitForURL(`/months/${thisMonth}`);
+  const bId = await currentUserId(pageB);
+  await contextB.close();
+
+  // A: 合計123,456円。日別合計が「1,200」「3,480」「9,999」「1.3万」「9.6万」になる
+  for (const [day, amount] of [["03", 1200], ["05", 3480], ["09", 9999], ["12", 13145], ["27", 95632]] as const) {
+    await addPaidExpense(page, groupId, aId, amount, `${thisMonth}-${day}`);
+  }
+  // B: 合計1,234,567円（7桁）。日別合計はどれも「12.3万」
+  for (let day = 13; day <= 21; day++) {
+    await addPaidExpense(page, groupId, bId, 123456, `${thisMonth}-${day}`);
+  }
+  await addPaidExpense(page, groupId, bId, 123463, `${thisMonth}-22`);
+
+  const storageState = await page.context().storageState();
+
+  async function openAt(width: number) {
+    const context = await browser.newContext({ viewport: { width, height: 760 }, storageState });
+    const view = await context.newPage();
+    await view.goto(`/months/${thisMonth}`);
+    await expect(view.getByTestId(`calendar-day-amount-${thisMonth}-27`)).toBeVisible();
+    await expect(view.getByTestId("member-spending-item")).toHaveCount(2);
+    return { context, view };
+  }
+
+  async function expectLeftOfCalendar(view: Page) {
+    const aside = (await view.getByTestId("member-spending").boundingBox())!;
+    const grid = (await view.getByTestId("calendar-grid").boundingBox())!;
+    expect(aside.x + aside.width).toBeLessThanOrEqual(grid.x);
+    return aside;
+  }
+
+  for (const width of [390, 360]) {
+    const { context, view } = await openAt(width);
+
+    // (a) 名前と金額は省略しない（FR-006, Edge Cases: 7桁）
+    await expectItem(view, 0, longName, "1,234,567円", "91%");
+    await expectItem(view, 1, "レイアウトA", "123,456円", "9%");
+
+    // (b) どの日付マスでも金額がマスからはみ出さない（SC-003）
+    const clipped = await view
+      .locator('[data-testid^="calendar-day-amount-"]')
+      .evaluateAll((els) =>
+        els
+          .filter((el) => el.scrollWidth > (el.parentElement as HTMLElement).clientWidth)
+          .map((el) => `${el.getAttribute("data-testid")}=${el.textContent}`),
+      );
+    expect(clipped, `clipped at ${width}px`).toEqual([]);
+
+    // (c) 横スクロールが出ない
+    const hScroll = await view.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth,
+    );
+    expect(hScroll, `horizontal scroll at ${width}px`).toBe(false);
+
+    // (d) 左の列はカレンダーの左にある（FR-004）
+    await expectLeftOfCalendar(view);
+    await context.close();
+  }
+
+  // 640px以上では左の列を176pxに広げる（research.md #1）
+  const { context, view } = await openAt(1024);
+  const aside = await expectLeftOfCalendar(view);
+  expect(Math.round(aside.width)).toBe(176);
+  await context.close();
+});
