@@ -93,18 +93,18 @@
 
 ### Tests for User Story 1（実装前に作成し、失敗することを確認する）
 
-- [ ] T018 [P] [US1] `tests/unit/calendar-grid.test.ts` を作成する。`buildMonthGrid(yearMonth)` が日曜始まりの週の配列を返すことを検証する: `"2026-09"` は1日が火曜なので先頭に空マス2つ・30日分、`"2026-02"` は1日が日曜で28日なのでちょうど4週、各週は7マス
-- [ ] T019 [P] [US1] `tests/unit/format.test.ts` を作成する。`formatDayAmount` が `1500 → "1,500"`、`9999 → "9,999"`、`10000 → "1万"`、`12345 → "1.2万"`、`15050 → "1.5万"` を返し（1万円以上は小数第1位で四捨五入し、`.0` は付けない。research.md #7）、`formatYen` が `-3000 → "-3,000円"` を返すことを検証する
-- [ ] T020 [P] [US1] `tests/e2e/calendar.spec.ts` を作成する（quickstart.md シナリオ2と US1 の受け入れシナリオ）: helpers でユーザー作成・グループ作成を行い、予算20,000円を設定する（US1の時点では予算画面がまだないため、旧画面の `budget-input` / `budget-submit` で設定する。US2のT034で共通手順 `createGroupWithBudget` に置き換える）。そのうえでカレンダーの `data-group-id` からグループIDを取得して、`page.request.post` で9月5日の1,000円・500円、9月10日の2,000円を登録する。`/months/{今月}` を直接開き、`calendar-day-amount-{日付}` に `1,500` / `2,000` が表示され、他の日に金額がないこと、`calendar-remaining` が `16,500円` であること、`calendar-next` で翌月に移ると残額が `36,500円` になること、`calendar-prev` で予算開始月より前の月に移ると `予算なし` と表示されることを検証する。さらに、別のブラウザコンテキスト（同じユーザー）で開いたカレンダーが、APIでの支出追加を操作なしで数秒以内に反映すること、グループ外のユーザーが `GET /api/groups/{groupId}/months/{年月}` にアクセスすると403になることを検証する（テストの日付は実行月に合わせて組み立てる）
+- [X] T018 [P] [US1] `tests/unit/calendar-grid.test.ts` を作成する。`buildMonthGrid(yearMonth)` が日曜始まりの週の配列を返すことを検証する: `"2026-09"` は1日が火曜なので先頭に空マス2つ・30日分、`"2026-02"` は1日が日曜で28日なのでちょうど4週、各週は7マス
+- [X] T019 [P] [US1] `tests/unit/format.test.ts` を作成する。`formatDayAmount` が `1500 → "1,500"`、`9999 → "9,999"`、`10000 → "1万"`、`12345 → "1.2万"`、`15050 → "1.5万"` を返し（1万円以上は小数第1位で四捨五入し、`.0` は付けない。research.md #7）、`formatYen` が `-3000 → "-3,000円"` を返すことを検証する
+- [X] T020 [P] [US1] `tests/e2e/calendar.spec.ts` を作成する（quickstart.md シナリオ2と US1 の受け入れシナリオ）: helpers でユーザー作成・グループ作成を行い、予算20,000円を設定する（US1の時点では予算画面がまだないため、旧画面の `budget-input` / `budget-submit` で設定する。US2のT034で共通手順 `createGroupWithBudget` に置き換える）。そのうえでカレンダーの `data-group-id` からグループIDを取得して、`page.request.post` で9月5日の1,000円・500円、9月10日の2,000円を登録する。`/months/{今月}` を直接開き、`calendar-day-amount-{日付}` に `1,500` / `2,000` が表示され、他の日に金額がないこと、`calendar-remaining` が `16,500円` であること、`calendar-next` で翌月に移ると残額が `36,500円` になること、`calendar-prev` で予算開始月より前の月に移ると `予算なし` と表示されることを検証する。さらに、別のブラウザコンテキスト（同じユーザー）で開いたカレンダーが、APIでの支出追加を操作なしで数秒以内に反映すること、グループ外のユーザーが `GET /api/groups/{groupId}/months/{年月}` にアクセスすると403になることを検証する（テストの日付は実行月に合わせて組み立てる）
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] `lib/calendar.ts` に `buildMonthGrid(yearMonth)` を実装する（T018を通す。`lib/date.ts` を使う）
-- [ ] T022 [P] [US1] `lib/format.ts` に `formatDayAmount` と `formatYen` を実装する（T019を通す）
-- [ ] T023 [US1] `app/api/groups/[groupId]/months/[yearMonth]/route.ts` に GET を実装する: 未認証401、非メンバー403、`yearMonth` の形式不正400、成功時は `getMonthSummary` の結果を返す（contracts/api.md）
-- [ ] T024 [US1] `components/month-calendar.tsx` を作成する（クライアントコンポーネント）: `useSWR` で `GET /months/{yearMonth}` を `refreshInterval: 3000` で取得し、上部にグループ名（`calendar-group-name`）、年月（`calendar-year-month`、例「2026年9月」）、残額（`calendar-remaining`。マイナスは赤字、`remaining` が null なら「予算なし」）、前月・翌月リンク（`calendar-prev` / `calendar-next`）を表示し、本体に `buildMonthGrid` の7列グリッド（各マス `calendar-day-{YYYY-MM-DD}`、金額 `calendar-day-amount-{YYYY-MM-DD}` を `formatDayAmount` で表示、支出のない日は金額なし）を表示する。ルート要素に `data-testid="calendar"` と `data-group-id` を付ける（contracts/screens.md「カレンダー」）
-- [ ] T025 [US1] `app/(dashboard)/months/[yearMonth]/page.tsx` を作成する: `await params` で `yearMonth` を受け取り、`isValidYearMonth` でなければ `notFound()`。`requireBudgetedGroup()` で選択中グループを取得して `MonthCalendar` を表示する（T013, T023, T024に依存）
-- [ ] T026 [US1] T018〜T020 がすべて成功し、旧画面のE2E 4本も引き続き成功することを確認する
+- [X] T021 [P] [US1] `lib/calendar.ts` に `buildMonthGrid(yearMonth)` を実装する（T018を通す。`lib/date.ts` を使う）
+- [X] T022 [P] [US1] `lib/format.ts` に `formatDayAmount` と `formatYen` を実装する（T019を通す）
+- [X] T023 [US1] `app/api/groups/[groupId]/months/[yearMonth]/route.ts` に GET を実装する: 未認証401、非メンバー403、`yearMonth` の形式不正400、成功時は `getMonthSummary` の結果を返す（contracts/api.md）
+- [X] T024 [US1] `components/month-calendar.tsx` を作成する（クライアントコンポーネント）: `useSWR` で `GET /months/{yearMonth}` を `refreshInterval: 3000` で取得し、上部にグループ名（`calendar-group-name`）、年月（`calendar-year-month`、例「2026年9月」）、残額（`calendar-remaining`。マイナスは赤字、`remaining` が null なら「予算なし」）、前月・翌月リンク（`calendar-prev` / `calendar-next`）を表示し、本体に `buildMonthGrid` の7列グリッド（各マス `calendar-day-{YYYY-MM-DD}`、金額 `calendar-day-amount-{YYYY-MM-DD}` を `formatDayAmount` で表示、支出のない日は金額なし）を表示する。ルート要素に `data-testid="calendar"` と `data-group-id` を付ける（contracts/screens.md「カレンダー」）
+- [X] T025 [US1] `app/(dashboard)/months/[yearMonth]/page.tsx` を作成する: `await params` で `yearMonth` を受け取り、`isValidYearMonth` でなければ `notFound()`。`requireBudgetedGroup()` で選択中グループを取得して `MonthCalendar` を表示する（T013, T023, T024に依存）
+- [X] T026 [US1] T018〜T020 がすべて成功し、旧画面のE2E 4本も引き続き成功することを確認する
 
 **Checkpoint**: カレンダー画面がURLで開け、単独で検証できる（旧画面も引き続き使える）
 
