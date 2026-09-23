@@ -9,6 +9,16 @@ export async function isGroupMember(userId: string, groupId: string): Promise<bo
   return membership !== null;
 }
 
+// 支払者の選択肢（FR-017: 支払者はグループのメンバー）
+export async function getGroupMembers(groupId: string) {
+  const memberships = await prisma.groupMember.findMany({
+    where: { groupId },
+    orderBy: [{ joinedAt: "asc" }, { id: "asc" }],
+    include: { user: { select: { id: true, displayName: true } } },
+  });
+  return memberships.map((m) => m.user);
+}
+
 // 選択中のグループを返す（FR-028）。未選択、または所属していないグループを指している場合は、
 // 最初に参加したグループを選び直して保存する（data-model.md「User（変更）」）。
 export async function resolveSelectedGroup(userId: string): Promise<Group | null> {

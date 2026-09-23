@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import useSWR from "swr";
 
@@ -124,10 +124,21 @@ export function MonthCalendar({
           </div>
         ))}
       </div>
+
+      {/* 支出追加。表示中の月に関わらず支出日の初期値は今日（FR-018） */}
+      <Link
+        data-testid="calendar-add"
+        href={`/expenses/new?date=${today}`}
+        aria-label="支出を追加"
+        className="fixed bottom-6 right-6 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary-hover"
+      >
+        <Plus className="size-6" aria-hidden="true" />
+      </Link>
     </main>
   );
 }
 
+// マスをタップするとその日の詳細へ（FR-016）
 function DayCell({
   date,
   amount,
@@ -138,9 +149,10 @@ function DayCell({
   isToday: boolean;
 }) {
   return (
-    <div
+    <Link
       data-testid={`calendar-day-${date}`}
-      className="flex min-h-16 flex-col items-center gap-1 border-r border-border p-1 last:border-r-0"
+      href={`/days/${date}`}
+      className="flex min-h-16 flex-col items-center gap-1 border-r border-border p-1 last:border-r-0 hover:bg-background"
     >
       <span
         className={`flex size-6 items-center justify-center rounded-full text-xs ${
@@ -157,6 +169,6 @@ function DayCell({
           {formatDayAmount(amount)}
         </span>
       )}
-    </div>
+    </Link>
   );
 }

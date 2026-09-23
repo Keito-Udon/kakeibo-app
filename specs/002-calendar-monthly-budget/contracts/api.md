@@ -57,7 +57,8 @@
 日別詳細画面の一覧（FR-019）。SWRのポーリング対象。
 
 - `date`: `YYYY-MM-DD`（実在する日付）。形式不正は400
-- **Response 200**: `{ date: string, total: number, expenses: ExpenseRecord[] }`（`createdAt` の昇順）
+- **Response 200**: `{ date: string, total: number, expenses: (ExpenseRecord & { paidBy: { id: string, displayName: string } })[] }`
+  （`createdAt` の昇順。支払者の表示名は日別詳細の一覧表示に使う）
 
 ## 支出記録
 

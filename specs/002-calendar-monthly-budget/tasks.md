@@ -147,20 +147,20 @@
 
 ### Tests for User Story 3（実装前に作成し、失敗することを確認する）
 
-- [ ] T036 [P] [US3] `tests/unit/day-expenses.test.ts` を作成する。`getDayExpenses(groupId, date)` が、その日の `spentOn` の支出だけを `createdAt` 昇順で返し、`total` がその合計であること、他のグループの支出を含まないことを検証する
-- [ ] T037 [P] [US3] `tests/e2e/day-detail.spec.ts` を作成する（quickstart.md シナリオ3、US3 AC1〜7）: カレンダーの `calendar-add` から開いた `expense-form` の支出日（`expense-form-date`）が今日であること → 支出を2件追加（うち1件は支払い方法「モバイル決済」）→ 保存後は `/days/{支出日}` に移り、`day-expense-item` に金額・内容・支払者・支払い方法（「モバイル決済」の表示を含む）が出ること → 日別詳細の `day-add` から開くと支出日がその日であること → `day-expense-edit` で1件の支出日を翌日に変えると、翌日の詳細に移り、カレンダーの両日の金額が更新されること → `day-expense-delete` で削除すると一覧から消え、カレンダーの金額と残額が更新されること → 支出のない日は `day-empty` が表示されること → 0円・マイナスの金額は保存できないこと（FR-022） → 別のコンテキストで同じ支出を削除した後に編集を保存すると「既に削除されています」の旨が表示されること → グループ外のユーザーが `GET /api/groups/{groupId}/days/{日付}` にアクセスすると403になること
+- [X] T036 [P] [US3] `tests/unit/day-expenses.test.ts` を作成する。`getDayExpenses(groupId, date)` が、その日の `spentOn` の支出だけを `createdAt` 昇順で返し、`total` がその合計であること、他のグループの支出を含まないことを検証する
+- [X] T037 [P] [US3] `tests/e2e/day-detail.spec.ts` を作成する（quickstart.md シナリオ3、US3 AC1〜7）: カレンダーの `calendar-add` から開いた `expense-form` の支出日（`expense-form-date`）が今日であること → 支出を2件追加（うち1件は支払い方法「モバイル決済」）→ 保存後は `/days/{支出日}` に移り、`day-expense-item` に金額・内容・支払者・支払い方法（「モバイル決済」の表示を含む）が出ること → 日別詳細の `day-add` から開くと支出日がその日であること → `day-expense-edit` で1件の支出日を翌日に変えると、翌日の詳細に移り、カレンダーの両日の金額が更新されること → `day-expense-delete` で削除すると一覧から消え、カレンダーの金額と残額が更新されること → 支出のない日は `day-empty` が表示されること → 0円・マイナスの金額は保存できないこと（FR-022） → 別のコンテキストで同じ支出を削除した後に編集を保存すると「既に削除されています」の旨が表示されること → グループ外のユーザーが `GET /api/groups/{groupId}/days/{日付}` にアクセスすると403になること
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] `lib/expenses.ts` に `getDayExpenses(groupId, date)` を実装する（T036を通す）
-- [ ] T039 [US3] `app/api/groups/[groupId]/days/[date]/route.ts` に GET を実装する: 未認証401、非メンバー403、`date` の形式不正400、成功時は `{ date, total, expenses }`（contracts/api.md）
-- [ ] T040 [P] [US3] `components/expense-form.tsx` を作成する（追加・編集で共用のクライアントコンポーネント）: 金額（`expense-form-amount`）、内容（`expense-form-description`）、支払者（`expense-form-paid-by`、グループのメンバーから選択）、支払い方法（`expense-form-payment-method`、現金／モバイル決済）、支出日（`expense-form-date`）、保存（`expense-form-submit`）、戻る（`expense-form-back`、ブラウザ履歴で戻る）、エラー表示。保存先は、追加なら `POST /api/groups/{groupId}/expenses`、編集なら `PATCH .../expenses/{expenseId}`。編集で404が返ったら「この支出は既に削除されています」と表示する。成功したら月・日のSWRキャッシュを無効化し、`router.push("/days/{保存した支出日}")` する（contracts/screens.md「支出追加・支出編集」）
-- [ ] T041 [US3] `app/(dashboard)/expenses/new/page.tsx` を作成する: `requireBudgetedGroup()`、`searchParams` の `date` が `isValidDate` を満たせばそれを、なければ今日を支出日の初期値にして `ExpenseForm` を表示する（FR-018）（T040に依存）
-- [ ] T042 [US3] `app/(dashboard)/expenses/[expenseId]/edit/page.tsx` を作成する: `requireBudgetedGroup()`、支出が存在しないか選択中グループのものでなければ `notFound()`、既存の値を初期値にして `ExpenseForm` を表示する（FR-020）（T040に依存）
-- [ ] T043 [US3] `components/day-expense-list.tsx` を作成する（クライアントコンポーネント）: `useSWR` で `GET /days/{date}` を `refreshInterval: 3000` で取得し、日付と合計、各支出（`day-expense-item`）の金額・内容・支払者名・支払い方法、編集リンク（`day-expense-edit` → `/expenses/{id}/edit`）、削除ボタン（`day-expense-delete`、確認のうえ `DELETE`、404なら既に削除された旨を表示）、支出がない場合の表示（`day-empty`「支出はありません」）、追加リンク（`day-add` → `/expenses/new?date={date}`）、戻るリンク（`day-back` → `/months/{その日の年月}`）を表示する。削除後は月のSWRキャッシュも無効化する（FR-019, FR-021）
-- [ ] T044 [US3] `app/(dashboard)/days/[date]/page.tsx` を作成する: `date` を検証（不正なら `notFound()`）、`requireBudgetedGroup()`、`DayExpenseList` を表示する（T039, T043に依存）
-- [ ] T045 [US3] `components/month-calendar.tsx` の各日付マスを `/days/{YYYY-MM-DD}` へのリンクにし（FR-016）、「＋」リンク（`calendar-add` → `/expenses/new?date={今日}`）を追加する（FR-018）
-- [ ] T046 [US3] T036・T037 と既存のテストがすべて成功することを確認する
+- [X] T038 [US3] `lib/expenses.ts` に `getDayExpenses(groupId, date)` を実装する（T036を通す）
+- [X] T039 [US3] `app/api/groups/[groupId]/days/[date]/route.ts` に GET を実装する: 未認証401、非メンバー403、`date` の形式不正400、成功時は `{ date, total, expenses }`（contracts/api.md）
+- [X] T040 [P] [US3] `components/expense-form.tsx` を作成する（追加・編集で共用のクライアントコンポーネント）: 金額（`expense-form-amount`）、内容（`expense-form-description`）、支払者（`expense-form-paid-by`、グループのメンバーから選択）、支払い方法（`expense-form-payment-method`、現金／モバイル決済）、支出日（`expense-form-date`）、保存（`expense-form-submit`）、戻る（`expense-form-back`、ブラウザ履歴で戻る）、エラー表示。保存先は、追加なら `POST /api/groups/{groupId}/expenses`、編集なら `PATCH .../expenses/{expenseId}`。編集で404が返ったら「この支出は既に削除されています」と表示する。成功したら月・日のSWRキャッシュを無効化し、`router.push("/days/{保存した支出日}")` する（contracts/screens.md「支出追加・支出編集」）
+- [X] T041 [US3] `app/(dashboard)/expenses/new/page.tsx` を作成する: `requireBudgetedGroup()`、`searchParams` の `date` が `isValidDate` を満たせばそれを、なければ今日を支出日の初期値にして `ExpenseForm` を表示する（FR-018）（T040に依存）
+- [X] T042 [US3] `app/(dashboard)/expenses/[expenseId]/edit/page.tsx` を作成する: `requireBudgetedGroup()`、支出が存在しないか選択中グループのものでなければ `notFound()`、既存の値を初期値にして `ExpenseForm` を表示する（FR-020）（T040に依存）
+- [X] T043 [US3] `components/day-expense-list.tsx` を作成する（クライアントコンポーネント）: `useSWR` で `GET /days/{date}` を `refreshInterval: 3000` で取得し、日付と合計、各支出（`day-expense-item`）の金額・内容・支払者名・支払い方法、編集リンク（`day-expense-edit` → `/expenses/{id}/edit`）、削除ボタン（`day-expense-delete`、確認のうえ `DELETE`、404なら既に削除された旨を表示）、支出がない場合の表示（`day-empty`「支出はありません」）、追加リンク（`day-add` → `/expenses/new?date={date}`）、戻るリンク（`day-back` → `/months/{その日の年月}`）を表示する。削除後は月のSWRキャッシュも無効化する（FR-019, FR-021）
+- [X] T044 [US3] `app/(dashboard)/days/[date]/page.tsx` を作成する: `date` を検証（不正なら `notFound()`）、`requireBudgetedGroup()`、`DayExpenseList` を表示する（T039, T043に依存）
+- [X] T045 [US3] `components/month-calendar.tsx` の各日付マスを `/days/{YYYY-MM-DD}` へのリンクにし（FR-016）、「＋」リンク（`calendar-add` → `/expenses/new?date={今日}`）を追加する（FR-018）
+- [X] T046 [US3] T036・T037 と既存のテストがすべて成功することを確認する
 
 **Checkpoint**: 新画面だけで、支出の閲覧・追加・編集・削除が完結する
 
