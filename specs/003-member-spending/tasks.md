@@ -77,9 +77,9 @@ A 3,000円・75%、B 1,000円・25%が表示されることを確認する（qui
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T012 [P] `README.md` の「主な機能」のカレンダーの説明に、メンバーごとの支払額と割合の表示を追記する
-- [ ] T013 quickstart.md のシナリオ1〜5を確認し、横幅390px・360px・1024pxでスクリーンショットを撮って表示を目視確認する（長い表示名の折り返し、割合の棒の色が参加順で固定されていること）
-- [ ] T014 `npm run test`・`npm run test:e2e`・`npm run lint`・`npx tsc --noEmit` がすべて成功することを確認する
+- [X] T012 [P] `README.md` の「主な機能」のカレンダーの説明に、メンバーごとの支払額と割合の表示を追記する
+- [X] T013 quickstart.md のシナリオ1〜5を確認し、横幅390px・360px・1024pxでスクリーンショットを撮って表示を目視確認する（長い表示名の折り返し、割合の棒の色が参加順で固定されていること）
+- [X] T014 `npm run test`・`npm run test:e2e`・`npm run lint`・`npx tsc --noEmit` がすべて成功することを確認する
 
 ---
 
