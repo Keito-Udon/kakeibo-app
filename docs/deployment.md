@@ -106,6 +106,14 @@ pm2 restart kakeibo-app
   （例: `cp prisma/dev.db ~/backups/dev-$(date +%F).db` をcronで日次実行）
 - **更新の反映**: ローカル（WSL）で開発・pushしたら、研究室マシン側で
   `git pull && npm ci && npx prisma migrate deploy && npm run build && pm2 restart kakeibo-app`
+- **マイグレーションを含む更新の前には必ずバックアップ**: `migrate deploy` は既存データを書き換える
+  ことがある（例: `20260923080000_monthly_budget_calendar` はグループの月次予算を月別予算に移し、
+  既存の支出に支出日を付ける）。失敗や想定外に備えて、上記の更新の前に
+  `mkdir -p ~/backups && cp prisma/dev.db ~/backups/dev-$(date +%F-%H%M).db` を実行しておく。
+  戻す場合は `pm2 stop kakeibo-app` のうえでバックアップを `prisma/dev.db` にコピーし直し、
+  更新前のコミットに `git checkout` してから再ビルド・再起動する
+- **月別予算への移行（002）の注意**: 移行時点でグループに設定されていた月次予算は、`migrate deploy`
+  を実行した月（日本時間）の設定額になり、その月が繰越の起点（繰越0円）になる
 - **独自ドメインが欲しくなった場合**: 安価なドメイン（年数百円〜）を取得し、Cloudflareに追加して
   named tunnelに切り替えれば、`kakeibo.example.com`のような好きな名前にできる（Tailscale Funnelの
   `ts.net`URLのままでも機能上は問題ない）

@@ -44,8 +44,7 @@ test("グループを作成・切り替えでき、最後に選んだグルー�
   await expect(items).toHaveCount(2);
   await expect(items.filter({ hasText: "グループ2" })).toHaveAttribute("data-selected", "true");
   await items.filter({ hasText: "グループ1" }).click();
-  await page.waitForURL(/\/(months\/.+)?$/);
-  await page.goto(`/months/${thisMonth}`);
+  await page.waitForURL(`/months/${thisMonth}`);
   await expect(page.getByTestId("calendar-group-name")).toHaveText("グループ1");
   await expect(page.getByTestId(`calendar-day-amount-${day}`)).toHaveText("1,000");
 
@@ -53,7 +52,7 @@ test("グループを作成・切り替えでき、最後に選んだグルー�
   await openMenuItem(page, "header-menu-logout");
   await page.waitForURL("/login");
   await login(page, email);
-  await page.goto(`/months/${thisMonth}`);
+  await page.waitForURL(`/months/${thisMonth}`);
   await expect(page.getByTestId("calendar-group-name")).toHaveText("グループ1");
 
   // US4 AC8: 別ユーザーのグループの招待リンクから参加すると、そのグループが選択中になり、所属は3つになる
@@ -66,7 +65,7 @@ test("グループを作成・切り替えでき、最後に選んだグルー�
   await ownerContext.close();
 
   await page.goto(new URL(invite.inviteUrl).pathname);
-  await page.goto(`/months/${thisMonth}`);
+  await page.waitForURL(`/months/${thisMonth}`);
   await expect(page.getByTestId("calendar-group-name")).toHaveText("グループC");
   await page.goto("/groups");
   await expect(items).toHaveCount(3);

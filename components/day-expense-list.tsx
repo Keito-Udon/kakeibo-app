@@ -42,11 +42,16 @@ export function DayExpenseList({ groupId, date }: { groupId: string; date: strin
   async function handleDelete(expenseId: string) {
     if (!confirm("この支出を削除しますか？")) return;
     setError(null);
-    const res = await fetch(`/api/groups/${groupId}/expenses/${expenseId}`, { method: "DELETE" });
-    if (res.status === 404) {
-      setError("この支出は既に削除されています");
-    } else if (!res.ok) {
-      setError("削除に失敗しました");
+    try {
+      const res = await fetch(`/api/groups/${groupId}/expenses/${expenseId}`, { method: "DELETE" });
+      if (res.status === 404) {
+        setError("この支出は既に削除されています");
+      } else if (!res.ok) {
+        setError(`削除に失敗しました（${res.status}）`);
+      }
+    } catch {
+      // 通信が途切れた場合。削除されたかどうかは、直後の再取得で一覧に反映される
+      setError("通信に失敗しました。一覧を確認してください");
     }
     await mutate();
     await revalidateGroup(groupId);

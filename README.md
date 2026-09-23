@@ -4,9 +4,21 @@
 （`.specify/`）を使って仕様駆動で開発している。詳細は以下を参照:
 
 - 企画検討メモ: [`docs/project-plan.md`](docs/project-plan.md)
-- 機能仕様: [`specs/001-shared-budget/spec.md`](specs/001-shared-budget/spec.md)
-- 実装プラン: [`specs/001-shared-budget/plan.md`](specs/001-shared-budget/plan.md)
+- 機能仕様・実装プラン:
+  - 001 共有家計簿MVP: [`spec.md`](specs/001-shared-budget/spec.md) / [`plan.md`](specs/001-shared-budget/plan.md)
+  - 002 カレンダー表示と月別予算: [`spec.md`](specs/002-calendar-monthly-budget/spec.md) / [`plan.md`](specs/002-calendar-monthly-budget/plan.md)
 - デプロイ手順: [`docs/deployment.md`](docs/deployment.md)
+
+## 主な機能
+
+画面は「1画面1機能」で分けている（画面ごとの役割は
+[`specs/002-calendar-monthly-budget/contracts/screens.md`](specs/002-calendar-monthly-budget/contracts/screens.md)）。
+
+- **カレンダー**（ログイン後の主画面）: 月の残額と、日ごとの支出合計を表示。前後の月に移動できる
+- **月別予算**: 年月をタップして月ごとに設定額を変更。使い切れなかった分は翌月に繰り越し、超過分は翌月から差し引く。グループで最初の1回だけ、ログイン後に予算決定画面が出る
+- **日別詳細・支出の追加／編集**: 日付をタップしてその日の支出を確認。支出日・支払者・支払い方法（現金／モバイル決済）を記録
+- **メニュー（…）**: 招待リンクの発行、グループ作成、グループ切り替え（複数グループに所属可）、ログアウト
+- 同じグループのメンバーの変更は、数秒以内に自動で画面に反映される
 
 ## セットアップ
 

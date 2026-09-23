@@ -201,16 +201,16 @@
 **Purpose**: `/` の行き先をカレンダーに切り替え、001の旧画面と不要になったAPI・テストを削除し、
 全体を検証する
 
-- [ ] T059 `tests/e2e/expense-sharing.spec.ts` を書き換える（quickstart.md シナリオ5、US1 AC6、US2 AC3）: ユーザーAがメニューから招待リンクを発行し、ユーザーBが参加すると予算画面を経ずにカレンダーに移ること → 両者がカレンダーを開いた状態で、Aの支出の追加・編集・削除と予算変更が、Bのカレンダーの日別合計と残額に操作なしで数秒以内に反映されること。あわせて `tests/e2e/first-run.spec.ts` の再ログイン後の確認を「`/months/{今月}` のカレンダーが表示される」に強める。この時点では旧画面が残っているため失敗することを確認する
-- [ ] T060 `app/(dashboard)/page.tsx` を振り分け専用にし、予算設定済みなら `/months/{今月}` へ `redirect()` する（FR-001の(3)）。`components/dashboard.tsx` を削除する
-- [ ] T061 [P] 不要になったAPIを削除する: `app/api/groups/[groupId]/budget/route.ts` を削除し、`app/api/groups/[groupId]/expenses/route.ts` の GET（T015の互換対応）を削除する（contracts/api.md「削除」）
-- [ ] T062 [P] `app/(dashboard)/layout.tsx` からログアウトのヘッダーを削除する（ログアウトはメニューへ移設済み）。認証ガードは残す
-- [ ] T063 [P] 旧画面向けのE2Eを整理する: `tests/e2e/budget-display.spec.ts`（`budget-carryover.spec.ts` へ移行済み）、`tests/e2e/payment-method.spec.ts`（`day-detail.spec.ts` へ移行済み）、`tests/e2e/logout.spec.ts`（`menu.spec.ts` へ移行済み）を削除する。削除前に、各ファイルが検証していた観点が移行先のテストに含まれていることを確認する
-- [ ] T064 `grep` で `monthlyBudget`・`getBudgetSummary`・`budget-input`・`expense-list`・`InviteSection` など削除したものへの参照が残っていないことを確認する
-- [ ] T065 001の状態（予算設定済みグループと支出あり）のDBのコピーに対してマイグレーションを適用し、quickstart.md シナリオ8を確認する
-- [ ] T066 quickstart.md のシナリオ1〜7を通しで確認し、食い違いがあれば修正する
-- [ ] T067 [P] `README.md` の機能説明と `docs/deployment.md` の「更新の反映」に、本機能のマイグレーション（データ移行を含む）の適用前に `prisma/dev.db` をバックアップする手順を追記する
-- [ ] T068 `npm run test`・`npm run test:e2e`・`npm run lint` がすべて成功することを確認する
+- [X] T059 `tests/e2e/expense-sharing.spec.ts` を書き換える（quickstart.md シナリオ5、US1 AC6、US2 AC3）: ユーザーAがメニューから招待リンクを発行し、ユーザーBが参加すると予算画面を経ずにカレンダーに移ること → 両者がカレンダーを開いた状態で、Aの支出の追加・編集・削除と予算変更が、Bのカレンダーの日別合計と残額に操作なしで数秒以内に反映されること。あわせて `tests/e2e/first-run.spec.ts` の再ログイン後の確認を「`/months/{今月}` のカレンダーが表示される」に強める。この時点では旧画面が残っているため失敗することを確認する
+- [X] T060 `app/(dashboard)/page.tsx` を振り分け専用にし、予算設定済みなら `/months/{今月}` へ `redirect()` する（FR-001の(3)）。`components/dashboard.tsx` を削除する
+- [X] T061 [P] 不要になったAPIを削除する: `app/api/groups/[groupId]/budget/route.ts` を削除し、`app/api/groups/[groupId]/expenses/route.ts` の GET（T015の互換対応）を削除する（contracts/api.md「削除」）
+- [X] T062 [P] `app/(dashboard)/layout.tsx` からログアウトのヘッダーを削除する（ログアウトはメニューへ移設済み）。認証ガードは残す
+- [X] T063 [P] 旧画面向けのE2Eを整理する: `tests/e2e/budget-display.spec.ts`（`budget-carryover.spec.ts` へ移行済み）、`tests/e2e/payment-method.spec.ts`（`day-detail.spec.ts` へ移行済み）、`tests/e2e/logout.spec.ts`（`menu.spec.ts` へ移行済み）を削除する。削除前に、各ファイルが検証していた観点が移行先のテストに含まれていることを確認する
+- [X] T064 `grep` で `monthlyBudget`・`getBudgetSummary`・`budget-input`・`expense-list`・`InviteSection` など削除したものへの参照が残っていないことを確認する
+- [X] T065 001の状態（予算設定済みグループと支出あり）のDBのコピーに対してマイグレーションを適用し、quickstart.md シナリオ8を確認する
+- [X] T066 quickstart.md のシナリオ1〜7を通しで確認し、食い違いがあれば修正する
+- [X] T067 [P] `README.md` の機能説明と `docs/deployment.md` の「更新の反映」に、本機能のマイグレーション（データ移行を含む）の適用前に `prisma/dev.db` をバックアップする手順を追記する
+- [X] T068 `npm run test`・`npm run test:e2e`・`npm run lint` がすべて成功することを確認する
 
 ---
 

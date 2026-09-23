@@ -28,7 +28,6 @@ export function GroupSwitcher({
     try {
       await sendJson("PUT", "/api/me/selected-group", { groupId });
       router.push("/");
-      router.refresh();
     } catch {
       setError("グループの切り替えに失敗しました");
       setPendingId(null);

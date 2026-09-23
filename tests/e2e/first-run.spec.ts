@@ -27,9 +27,11 @@ test("グループで最初の1回だけ、予算決定画面を経てカレン�
   await page.waitForURL(`/months/${thisMonth}`);
   await expect(page.getByTestId("calendar-remaining")).toContainText("20,000円");
 
-  // 再ログインでは予算決定画面を経由しない（SC-001）
-  await page.getByTestId("logout-button").click();
+  // 再ログインでは予算決定画面を経由せず、直接カレンダーへ（FR-001(3), SC-001）
+  await page.getByTestId("header-menu-button").click();
+  await page.getByTestId("header-menu-logout").click();
   await page.waitForURL("/login");
   await login(page, email);
-  expect(new URL(page.url()).pathname).not.toContain("/budget");
+  await page.waitForURL(`/months/${thisMonth}`);
+  await expect(page.getByTestId("calendar")).toBeVisible();
 });
