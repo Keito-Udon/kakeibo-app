@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { addMonths, yearMonthOf } from "@/lib/date";
 import { logger } from "@/lib/logger";
+import { getMemberTotals, type MemberTotal } from "@/lib/member-spending";
 
 export type MonthBudget = {
   setAmount: number; // その月の設定額（引き継ぎ後。FR-008）
@@ -17,6 +18,7 @@ export type MonthSummary = {
 export type MonthSummaryResponse = MonthSummary & {
   yearMonth: string;
   dailyTotals: Record<string, number>;
+  memberTotals: MemberTotal[]; // 003: 支払者ごとの支払額。カレンダーと同じ取得でそろえる（research.md #2）
 };
 
 type BudgetSetting = { yearMonth: string; amount: number };
@@ -85,6 +87,7 @@ export async function getMonthSummary(
     yearMonth,
     ...computeMonthSummary(budgets, monthlyTotals, yearMonth),
     dailyTotals,
+    memberTotals: await getMemberTotals(groupId, yearMonth),
   };
 }
 

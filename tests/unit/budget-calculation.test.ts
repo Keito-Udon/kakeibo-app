@@ -108,4 +108,100 @@ describe("monthly budget (DB)", () => {
     await setMonthlyBudget(group.id, "2026-09", 1, user.id);
     await expect(hasAnyBudget(group.id)).resolves.toBe(true);
   });
+
+  // 003: メンバーごとの支払額（memberTotals）
+  describe("memberTotals", () => {
+    async function makePair(suffix: string) {
+      const { user: a, group } = await makeGroupWithMember(`${suffix}-a`);
+      const b = await makeUser(`${suffix}-b`);
+      await prisma.groupMember.create({ data: { userId: b.id, groupId: group.id } });
+      return { a, b, group };
+    }
+
+    // 記録した人（createdBy）と支払者（paidBy）を別々に指定できる
+    async function addPaid(
+      groupId: string,
+      createdById: string,
+      paidById: string,
+      amount: number,
+      spentOn: string,
+    ) {
+      return prisma.expenseRecord.create({
+        data: {
+          groupId,
+          amount,
+          description: `paid ${spentOn}`,
+          paidById,
+          paymentMethod: "CASH",
+          createdById,
+          spentOn,
+        },
+      });
+    }
+
+    function amountsOf(summary: Awaited<ReturnType<typeof getMonthSummary>>) {
+      return Object.fromEntries(summary.memberTotals.map((m) => [m.userId, m.amount]));
+    }
+
+    it("(a) counts by payer, not by the member who recorded it", async () => {
+      const { a, b, group } = await makePair("payer");
+      await setMonthlyBudget(group.id, "2026-09", 20000, a.id);
+      await addPaid(group.id, a.id, a.id, 3000, "2026-09-05");
+      await addPaid(group.id, a.id, b.id, 1000, "2026-09-06");
+
+      const summary = await getMonthSummary(group.id, "2026-09");
+      expect(amountsOf(summary)).toEqual({ [a.id]: 3000, [b.id]: 1000 });
+      expect(summary.memberTotals.map((m) => [m.userId, m.percent])).toEqual([
+        [a.id, 75],
+        [b.id, 25],
+      ]);
+    });
+
+    it("(b) excludes other months and other groups", async () => {
+      const { a, b, group } = await makePair("scope");
+      const other = await makeGroupWithMember("scope-other");
+      await prisma.groupMember.create({ data: { userId: a.id, groupId: other.group.id } });
+      await addPaid(group.id, a.id, a.id, 1000, "2026-09-30");
+      await addPaid(group.id, a.id, a.id, 5000, "2026-08-31");
+      await addPaid(group.id, a.id, b.id, 7000, "2026-10-01");
+      await addPaid(other.group.id, a.id, a.id, 9000, "2026-09-15");
+
+      const summary = await getMonthSummary(group.id, "2026-09");
+      expect(amountsOf(summary)).toEqual({ [a.id]: 1000, [b.id]: 0 });
+    });
+
+    it("(c) includes members without expenses and (d) sums to spent", async () => {
+      const { a, b, group } = await makePair("sum");
+      await addPaid(group.id, b.id, a.id, 1234, "2026-09-01");
+      await addPaid(group.id, b.id, a.id, 766, "2026-09-02");
+
+      const summary = await getMonthSummary(group.id, "2026-09");
+      expect(summary.memberTotals).toHaveLength(2);
+      expect(amountsOf(summary)[b.id]).toBe(0);
+      expect(summary.memberTotals.reduce((s, m) => s + m.amount, 0)).toBe(summary.spent);
+      expect(summary.spent).toBe(2000);
+    });
+
+    it("(e) shows amounts in months before the budget started", async () => {
+      const { a, b, group } = await makePair("before");
+      await setMonthlyBudget(group.id, "2026-09", 20000, a.id);
+      await addPaid(group.id, a.id, b.id, 4000, "2026-08-10");
+
+      const august = await getMonthSummary(group.id, "2026-08");
+      expect(august.budget).toBeNull();
+      expect(amountsOf(august)).toEqual({ [a.id]: 0, [b.id]: 4000 });
+      expect(august.memberTotals[0]).toMatchObject({ userId: b.id, percent: 100 });
+    });
+
+    it("(f) moving an expense to the next month moves its amount", async () => {
+      const { a, group } = await makePair("move");
+      const expense = await addPaid(group.id, a.id, a.id, 2500, "2026-09-20");
+      await addPaid(group.id, a.id, a.id, 500, "2026-09-21");
+
+      await prisma.expenseRecord.update({ where: { id: expense.id }, data: { spentOn: "2026-10-03" } });
+
+      expect(amountsOf(await getMonthSummary(group.id, "2026-09"))[a.id]).toBe(500);
+      expect(amountsOf(await getMonthSummary(group.id, "2026-10"))[a.id]).toBe(2500);
+    });
+  });
 });

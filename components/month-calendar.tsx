@@ -5,6 +5,7 @@ import Link from "next/link";
 import useSWR from "swr";
 
 import { HeaderMenu } from "@/components/header-menu";
+import { MemberSpending } from "@/components/member-spending";
 import type { MonthSummaryResponse } from "@/lib/budget";
 import { buildMonthGrid } from "@/lib/calendar";
 import { addMonths } from "@/lib/date";
@@ -101,33 +102,37 @@ export function MonthCalendar({
         </p>
       </header>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
-        <div className="grid grid-cols-7 border-b border-border text-center text-xs text-muted">
-          {WEEKDAYS.map((weekday, i) => (
-            <div
-              key={weekday}
-              className={`py-2 ${i === 0 ? "text-danger" : ""} ${i === 6 ? "text-primary" : ""}`}
-            >
-              {weekday}
+      {/* 表示中の月の状況: 左にメンバーごとの支払額（003 FR-004）、右に日付ごとの支出 */}
+      <div className="flex gap-2">
+        <MemberSpending memberTotals={data?.memberTotals} />
+        <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <div className="grid grid-cols-7 border-b border-border text-center text-xs text-muted">
+            {WEEKDAYS.map((weekday, i) => (
+              <div
+                key={weekday}
+                className={`py-2 ${i === 0 ? "text-danger" : ""} ${i === 6 ? "text-primary" : ""}`}
+              >
+                {weekday}
+              </div>
+            ))}
+          </div>
+          {buildMonthGrid(yearMonth).map((week, weekIndex) => (
+            <div key={weekIndex} className="grid grid-cols-7 border-b border-border last:border-b-0">
+              {week.map((date, dayIndex) =>
+                date === null ? (
+                  <div key={`blank-${dayIndex}`} className="min-h-16 bg-background/50" />
+                ) : (
+                  <DayCell
+                    key={date}
+                    date={date}
+                    amount={data?.dailyTotals[date]}
+                    isToday={date === today}
+                  />
+                ),
+              )}
             </div>
           ))}
         </div>
-        {buildMonthGrid(yearMonth).map((week, weekIndex) => (
-          <div key={weekIndex} className="grid grid-cols-7 border-b border-border last:border-b-0">
-            {week.map((date, dayIndex) =>
-              date === null ? (
-                <div key={`blank-${dayIndex}`} className="min-h-16 bg-background/50" />
-              ) : (
-                <DayCell
-                  key={date}
-                  date={date}
-                  amount={data?.dailyTotals[date]}
-                  isToday={date === today}
-                />
-              ),
-            )}
-          </div>
-        ))}
       </div>
 
       {/* 支出追加。表示中の月に関わらず支出日の初期値は今日（FR-018） */}
