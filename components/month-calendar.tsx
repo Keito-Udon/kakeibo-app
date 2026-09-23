@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import useSWR from "swr";
 
+import { HeaderMenu } from "@/components/header-menu";
 import type { MonthSummaryResponse } from "@/lib/budget";
 import { buildMonthGrid } from "@/lib/calendar";
 import { addMonths } from "@/lib/date";
@@ -43,9 +44,13 @@ export function MonthCalendar({
       className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-4 pb-12 pt-4"
     >
       <header className="flex flex-col gap-1">
-        <p data-testid="calendar-group-name" className="text-sm text-muted">
-          {groupName}
-        </p>
+        <div className="flex items-center justify-between gap-2">
+          {/* 選択中のグループ名（FR-029） */}
+          <p data-testid="calendar-group-name" className="text-sm text-muted">
+            {groupName}
+          </p>
+          <HeaderMenu />
+        </div>
         <div className="flex items-center justify-between gap-2">
           <Link
             data-testid="calendar-prev"

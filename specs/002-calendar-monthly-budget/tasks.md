@@ -176,21 +176,21 @@
 
 ### Tests for User Story 4（実装前に作成し、失敗することを確認する）
 
-- [ ] T047 [P] [US4] `tests/unit/selected-group.test.ts` に追記する。`selectGroup(userId, groupId)` が、メンバーなら `selectedGroupId` を更新し、非メンバーなら例外を投げて更新しないこと。`joinGroupByToken` で2つ目のグループに参加すると、1つ目の所属が残ったまま `selectedGroupId` が2つ目になること
-- [ ] T048 [P] [US4] `tests/e2e/menu.spec.ts` を作成する（US4 AC1〜3）: カレンダーの `header-menu-button` を押すと `header-menu-invite` `header-menu-create-group` `header-menu-switch-group` `header-menu-logout` が表示されること → 招待リンク画面で `invite-generate` を押すと `invite-url` にURLが表示されること → メニューからログアウトすると `/login` に移り、`/months/{今月}` を開いても `/login` に戻されること
-- [ ] T049 [P] [US4] `tests/e2e/multi-group.spec.ts` を作成する（quickstart.md シナリオ6、US4 AC4〜8）: 未所属のユーザーはログイン後に `/groups/new` に移ること → メニューからグループを作成すると新しいグループの予算画面（初回モード）に移り、保存後のカレンダーに新しいグループ名が表示され、元のグループの支出が見えないこと → `/groups` で元のグループを選ぶと元のグループのカレンダーに戻ること → ログアウト・再ログインで元のグループが開くこと → 別ユーザーのグループの招待リンクから参加すると、そのグループが選択中になり、`/groups` に両方のグループが並ぶこと
+- [X] T047 [P] [US4] `tests/unit/selected-group.test.ts` に追記する。`selectGroup(userId, groupId)` が、メンバーなら `selectedGroupId` を更新し、非メンバーなら例外を投げて更新しないこと。`joinGroupByToken` で2つ目のグループに参加すると、1つ目の所属が残ったまま `selectedGroupId` が2つ目になること
+- [X] T048 [P] [US4] `tests/e2e/menu.spec.ts` を作成する（US4 AC1〜3）: カレンダーの `header-menu-button` を押すと `header-menu-invite` `header-menu-create-group` `header-menu-switch-group` `header-menu-logout` が表示されること → 招待リンク画面で `invite-generate` を押すと `invite-url` にURLが表示されること → メニューからログアウトすると `/login` に移り、`/months/{今月}` を開いても `/login` に戻されること
+- [X] T049 [P] [US4] `tests/e2e/multi-group.spec.ts` を作成する（quickstart.md シナリオ6、US4 AC4〜8）: 未所属のユーザーはログイン後に `/groups/new` に移ること → メニューからグループを作成すると新しいグループの予算画面（初回モード）に移り、保存後のカレンダーに新しいグループ名が表示され、元のグループの支出が見えないこと → `/groups` で元のグループを選ぶと元のグループのカレンダーに戻ること → ログアウト・再ログインで元のグループが開くこと → 別ユーザーのグループの招待リンクから参加すると、そのグループが選択中になり、`/groups` に両方のグループが並ぶこと
 
 ### Implementation for User Story 4
 
-- [ ] T050 [US4] `lib/groups.ts` に `selectGroup(userId, groupId)` を実装する（非メンバーなら例外。成功時 `logger.info("group.select", { userId, groupId })`）（T047を通す）
-- [ ] T051 [US4] `app/api/me/selected-group/route.ts` に PUT を実装する: 未認証401、`groupId` 欠落400、非メンバー403、成功時 `{ groupId }`（contracts/api.md）（T050に依存）
-- [ ] T052 [P] [US4] `components/invite-link.tsx` を作成し、`components/dashboard.tsx` の `InviteSection`（発行・コピー、`invite-generate` / `invite-url`）と同じ機能を持たせる。`app/(dashboard)/invite-link/page.tsx` を作成し、`requireActiveGroup()` のうえで `InviteLink` と戻るリンク（→ カレンダー）を表示する（FR-024）
-- [ ] T053 [P] [US4] `components/header-menu.tsx` を作成する（クライアントコンポーネント）: 3点リーダーのボタン（`header-menu-button`）で開閉し、「招待リンク」（`header-menu-invite` → `/invite-link`）、「グループ作成」（`header-menu-create-group` → `/groups/new`）、「グループ切り替え」（`header-menu-switch-group` → `/groups`）、「ログアウト」（`header-menu-logout`、`signOut({ redirectTo: "/login" })` を呼ぶServer Actionのフォーム）を表示する（FR-023, FR-025。research.md #9）
-- [ ] T054 [US4] `components/month-calendar.tsx` の上部に `HeaderMenu` を配置する（T053に依存）
-- [ ] T055 [US4] `app/(dashboard)/groups/new/page.tsx` を作成し、`components/create-group-form.tsx` を表示する。作成後の遷移を `router.refresh()` から `router.push("/")` に変える（振り分けにより新グループの予算画面へ）。所属グループがある場合のみ戻るリンクを表示する（FR-026）
-- [ ] T056 [US4] `app/(dashboard)/groups/page.tsx` と `components/group-switcher.tsx` を作成する: 所属グループの一覧（`group-switch-item`、選択中に印）を表示し、選ぶと `PUT /api/me/selected-group` を呼んで `router.push("/")` する。戻るリンクを付ける（FR-027）（T051に依存）
-- [ ] T057 [US4] `app/(dashboard)/page.tsx` の振り分けを更新し、未所属なら `/groups/new` へ `redirect()` する（FR-001の(1)）。`tests/e2e/helpers.ts` のグループ作成手順が新しい画面でも動くことを確認する（T055に依存）
-- [ ] T058 [US4] T047〜T049 と既存のテストがすべて成功することを確認する
+- [X] T050 [US4] `lib/groups.ts` に `selectGroup(userId, groupId)` を実装する（非メンバーなら例外。成功時 `logger.info("group.select", { userId, groupId })`）（T047を通す）
+- [X] T051 [US4] `app/api/me/selected-group/route.ts` に PUT を実装する: 未認証401、`groupId` 欠落400、非メンバー403、成功時 `{ groupId }`（contracts/api.md）（T050に依存）
+- [X] T052 [P] [US4] `components/invite-link.tsx` を作成し、`components/dashboard.tsx` の `InviteSection`（発行・コピー、`invite-generate` / `invite-url`）と同じ機能を持たせる。`app/(dashboard)/invite-link/page.tsx` を作成し、`requireActiveGroup()` のうえで `InviteLink` と戻るリンク（→ カレンダー）を表示する（FR-024）
+- [X] T053 [P] [US4] `components/header-menu.tsx` を作成する（クライアントコンポーネント）: 3点リーダーのボタン（`header-menu-button`）で開閉し、「招待リンク」（`header-menu-invite` → `/invite-link`）、「グループ作成」（`header-menu-create-group` → `/groups/new`）、「グループ切り替え」（`header-menu-switch-group` → `/groups`）、「ログアウト」（`header-menu-logout`、`signOut({ redirectTo: "/login" })` を呼ぶServer Actionのフォーム）を表示する（FR-023, FR-025。research.md #9）
+- [X] T054 [US4] `components/month-calendar.tsx` の上部に `HeaderMenu` を配置する（T053に依存）
+- [X] T055 [US4] `app/(dashboard)/groups/new/page.tsx` を作成し、`components/create-group-form.tsx` を表示する。作成後の遷移を `router.refresh()` から `router.push("/")` に変える（振り分けにより新グループの予算画面へ）。所属グループがある場合のみ戻るリンクを表示する（FR-026）
+- [X] T056 [US4] `app/(dashboard)/groups/page.tsx` と `components/group-switcher.tsx` を作成する: 所属グループの一覧（`group-switch-item`、選択中に印）を表示し、選ぶと `PUT /api/me/selected-group` を呼んで `router.push("/")` する。戻るリンクを付ける（FR-027）（T051に依存）
+- [X] T057 [US4] `app/(dashboard)/page.tsx` の振り分けを更新し、未所属なら `/groups/new` へ `redirect()` する（FR-001の(1)）。`tests/e2e/helpers.ts` のグループ作成手順が新しい画面でも動くことを確認する（T055に依存）
+- [X] T058 [US4] T047〜T049 と既存のテストがすべて成功することを確認する
 
 **Checkpoint**: 4つのユーザーストーリーの新画面がすべてそろう
 

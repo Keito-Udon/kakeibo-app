@@ -5,7 +5,6 @@ import { hasAnyBudget } from "@/lib/budget";
 import { currentYearMonthJst } from "@/lib/date";
 import { prisma } from "@/lib/db";
 import { resolveSelectedGroup } from "@/lib/groups";
-import { CreateGroupForm } from "@/components/create-group-form";
 import { Dashboard } from "@/components/dashboard";
 
 export default async function DashboardPage() {
@@ -14,9 +13,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // FR-001(1): どのグループにも所属していなければグループ作成画面へ
   const group = await resolveSelectedGroup(session.user.id);
   if (!group) {
-    return <CreateGroupForm />;
+    redirect("/groups/new");
   }
 
   // FR-001(2): グループで一度も予算が設定されていなければ、初回の予算決定画面へ

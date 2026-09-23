@@ -1,12 +1,33 @@
 import type { Group } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
+import { logger } from "@/lib/logger";
+
+export class NotGroupMemberError extends Error {}
 
 export async function isGroupMember(userId: string, groupId: string): Promise<boolean> {
   const membership = await prisma.groupMember.findUnique({
     where: { userId_groupId: { userId, groupId } },
   });
   return membership !== null;
+}
+
+// グループ切り替え（FR-027）。所属していないグループは選べない
+export async function selectGroup(userId: string, groupId: string): Promise<void> {
+  if (!(await isGroupMember(userId, groupId))) {
+    throw new NotGroupMemberError(`user ${userId} is not a member of group ${groupId}`);
+  }
+  await prisma.user.update({ where: { id: userId }, data: { selectedGroupId: groupId } });
+  logger.info("group.select", { userId, groupId });
+}
+
+export async function getUserGroups(userId: string) {
+  const memberships = await prisma.groupMember.findMany({
+    where: { userId },
+    orderBy: [{ joinedAt: "asc" }, { id: "asc" }],
+    include: { group: { select: { id: true, name: true } } },
+  });
+  return memberships.map((m) => m.group);
 }
 
 // 支払者の選択肢（FR-017: 支払者はグループのメンバー）
