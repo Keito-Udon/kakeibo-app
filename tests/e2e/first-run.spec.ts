@@ -23,7 +23,8 @@ test("グループで最初の1回だけ、予算決定画面を経てカレン�
     await page.waitForURL(`/months/${thisMonth}/budget`);
   }
 
-  // FR-002: 決定するとカレンダーへ
+  // FR-002: 決定するとカレンダーへ（直前の読み込みのハイドレーションを待ってから入力する）
+  await page.waitForLoadState("networkidle");
   await page.getByTestId("budget-form-amount").fill("20000");
   await page.getByTestId("budget-form-submit").click();
   await page.waitForURL(`/months/${thisMonth}`);

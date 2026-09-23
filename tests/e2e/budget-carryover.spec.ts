@@ -4,6 +4,7 @@ import { addMonths, currentYearMonthJst } from "../../lib/date";
 import {
   addExpenseViaApi,
   createGroupWithBudget,
+  gotoForInput,
   groupIdOnCalendar,
   signupAndLogin,
   uniqueEmail,
@@ -53,7 +54,7 @@ test("年月から予算を変更でき、余り・超過が翌月に繰り越�
   await expect(page.getByTestId("calendar-remaining")).toContainText("22,000円");
 
   // FR-007: 0円は保存できない
-  await page.goto(`/months/${nextMonth}/budget`);
+  await gotoForInput(page, `/months/${nextMonth}/budget`);
   await page.getByTestId("budget-form-amount").fill("0");
   await page.getByTestId("budget-form-submit").click();
   await expect(page.getByTestId("budget-form-error")).toBeVisible();

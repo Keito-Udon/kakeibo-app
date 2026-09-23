@@ -302,3 +302,10 @@ Task: "lib/format.ts に formatDayAmount / formatYen を実装"
 - [X] T070 CRITICAL: `tests/e2e/first-run.spec.ts` に、予算を決める前のグループで `/days/{今月-05}` と `/expenses/new` を開くと、どちらも `/months/{今月}/budget` に戻されることの検証を追加する per Constitution II / FR-003 (partial)
 - [X] T071 CRITICAL: `tests/e2e/multi-group.spec.ts` に、メニューからグループを作成して予算を決めずに戻ったグループへ「グループ切り替え」で切り替えると、そのグループの初回の予算決定画面（見出し「予算を決める」）に遷移することの検証を追加する per Constitution II / FR-027 (partial)
 - [X] T072 CRITICAL: `tests/e2e/day-detail.spec.ts` に、支出の支出日を翌月の日付に変更すると、今月のカレンダーからその日の金額が消えて残額が増え、翌月のカレンダーの該当日に金額が表示されることの検証を追加する per Constitution II / Edge Cases「支出日を別の月に変更」 (partial)
+
+## Phase 9: Convergence
+
+2回目の `/speckit-converge` で見つかった差分。Phase 8 の4件は解消済み。いずれも実装済みの「拒否する」挙動に検証テストが欠けているもの（憲法II）で、Phase 8 の評価時に見落としていた。
+
+- [X] T073 CRITICAL: `tests/e2e/day-detail.spec.ts`（または新規の `tests/e2e/authorization.spec.ts`）に、グループのメンバーでないユーザーのIDを `paidById` にした `POST /api/groups/{groupId}/expenses` と `PATCH /api/groups/{groupId}/expenses/{expenseId}` がどちらも400を返し、支出が追加・変更されない（日別APIの結果が変わらない）ことの検証を追加する per Constitution II / FR-017 (partial)
+- [X] T074 CRITICAL: グループ外のユーザーが、(a) `PUT /api/groups/{groupId}/months/{今月}/budget` を送ると403で設定額が変わらない、(b) `POST /api/groups/{groupId}/expenses` を送ると403で支出が増えない、(c) 他のグループの支出の `/expenses/{expenseId}/edit` を開くと404（「ページが見つからない」表示）になることを、E2Eで検証する per Constitution II / Edge Cases「グループ外のユーザーのアクセスは拒否」 (partial)

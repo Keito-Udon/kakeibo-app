@@ -9,6 +9,13 @@ export function uniqueEmail(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@example.com`;
 }
 
+// URLを直接開いたあと、フォームに入力する前にハイドレーションを待つ。待たずに入力すると、
+// ハイドレーション時にReactが初期値で上書きし、入力が失われることがある
+export async function gotoForInput(page: Page, path: string) {
+  await page.goto(path);
+  await page.waitForLoadState("networkidle");
+}
+
 export async function signup(page: Page, email: string, displayName: string) {
   await page.goto("/signup");
   await page.getByTestId("signup-email").fill(email);

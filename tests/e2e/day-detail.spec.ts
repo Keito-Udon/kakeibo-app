@@ -4,6 +4,7 @@ import { addMonths, currentYearMonthJst, todayJst } from "../../lib/date";
 import {
   addExpenseViaApi,
   createGroupWithBudget,
+  gotoForInput,
   groupIdOnCalendar,
   signupAndLogin,
   uniqueEmail,
@@ -82,7 +83,7 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
   await expect(page.getByTestId("day-empty")).toBeVisible();
 
   // FR-022: 0円・マイナスは保存できない
-  await page.goto(`/expenses/new?date=${thisMonth}-07`);
+  await gotoForInput(page, `/expenses/new?date=${thisMonth}-07`);
   await page.getByTestId("expense-form-description").fill("ゼロ");
   for (const amount of ["0", "-100"]) {
     await page.getByTestId("expense-form-amount").fill(amount);
@@ -93,7 +94,7 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
 
   // Edge Cases: 編集中に別の端末で削除されたら、保存時に既に削除された旨を出す
   const expense = await addExpenseViaApi(page, groupId, 800, `${thisMonth}-08`, "消える支出");
-  await page.goto(`/expenses/${expense.id}/edit`);
+  await gotoForInput(page, `/expenses/${expense.id}/edit`);
   const deleted = await page.request.delete(`/api/groups/${groupId}/expenses/${expense.id}`);
   expect(deleted.status()).toBe(204);
   await page.getByTestId("expense-form-amount").fill("900");
@@ -106,7 +107,7 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
   await page.goto(`/months/${thisMonth}`);
   await expect(page.getByTestId(`calendar-day-amount-${thisMonth}-20`)).toHaveText("2,500");
   await expect(page.getByTestId("calendar-remaining")).toContainText("16,500円");
-  await page.goto(`/expenses/${moving.id}/edit`);
+  await gotoForInput(page, `/expenses/${moving.id}/edit`);
   await page.getByTestId("expense-form-date").fill(`${nextMonth}-03`);
   await page.getByTestId("expense-form-submit").click();
   await page.waitForURL(`/days/${nextMonth}-03`);
