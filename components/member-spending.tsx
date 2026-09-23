@@ -46,6 +46,7 @@ export function MemberSpending({ memberTotals }: { memberTotals: MemberTotal[] |
           </p>
           <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-background">
             <div
+              data-testid="member-spending-bar"
               className={`h-full ${BAR_COLORS[member.colorIndex % BAR_COLORS.length]}`}
               style={{ width: `${member.percent ?? 0}%` }}
             />

@@ -30,6 +30,17 @@ function item(page: Page, index: number) {
   return page.getByTestId("member-spending-item").nth(index);
 }
 
+// 割合の棒の長さ（棒の幅 ÷ 外枠の幅）。FR-002「割合の大きさが分かる棒」
+function barRatio(page: Page, index: number) {
+  return item(page, index)
+    .getByTestId("member-spending-bar")
+    .evaluate(
+      (el) =>
+        el.getBoundingClientRect().width /
+        (el.parentElement as HTMLElement).getBoundingClientRect().width,
+    );
+}
+
 async function expectItem(page: Page, index: number, name: string, amount: string, percent: string) {
   await expect(item(page, index).getByTestId("member-spending-name")).toHaveText(name, {
     timeout: 10_000,
@@ -65,6 +76,8 @@ test("カレンダーの左に、支払者ごとの支払額と割合が表示�
   await expect(page.getByTestId("member-spending-item")).toHaveCount(2);
   await expectItem(page, 0, "支払A", "3,000円", "75%");
   await expectItem(page, 1, "支払B", "1,000円", "25%");
+  expect(await barRatio(page, 0)).toBeCloseTo(0.75, 1);
+  expect(await barRatio(page, 1)).toBeCloseTo(0.25, 1);
 
   // SC-002: 支払額の合計はその月の支出合計と一致する
   const month = await (await page.request.get(`/api/groups/${groupId}/months/${thisMonth}`)).json();
@@ -81,6 +94,8 @@ test("カレンダーの左に、支払者ごとの支払額と割合が表示�
   await page.waitForURL(`/months/${addMonths(thisMonth, 1)}`);
   await expectItem(page, 0, "支払A", "0円", "支出なし");
   await expectItem(page, 1, "支払B", "0円", "支出なし");
+  expect(await barRatio(page, 0)).toBe(0);
+  expect(await barRatio(page, 1)).toBe(0);
 
   // US1 AC6, FR-008: Bの画面は、Aの追加と支払者の変更を数秒以内に反映する
   await expectItem(pageB, 0, "支払A", "3,000円", "100%");

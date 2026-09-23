@@ -135,3 +135,9 @@ Task: "tests/e2e/member-spending.spec.ts を作成"
 - 各タスクの完了は、対応するテストの成功で判断する（憲法II）
 - 論理的なタスクの区切りごとにコミットする（`main` に直接）
 - コマンド（テスト・lint）は WSL 経由で実行する
+
+## Phase 6: Convergence
+
+`/speckit-converge` で見つかった差分。機能は実装済みで、仕様に書かれた挙動のうち検証テストが欠けているもの（憲法II）を補う。
+
+- [X] T015 CRITICAL: `components/member-spending.tsx` の割合の棒に `data-testid="member-spending-bar"` を付け、`tests/e2e/member-spending.spec.ts` の最初のテストに、75%・25%のメンバーの棒の幅（`boundingBox` の幅 ÷ 棒の外枠の幅）がそれぞれ約0.75・約0.25になること、支出のない月（翌月）では幅が0になることの検証を追加する per Constitution II / FR-002, US1 AC1 (partial)
