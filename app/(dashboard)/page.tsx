@@ -1,8 +1,8 @@
-
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { resolveSelectedGroup } from "@/lib/groups";
 import { CreateGroupForm } from "@/components/create-group-form";
 import { Dashboard } from "@/components/dashboard";
 
@@ -11,27 +11,20 @@ export default async function DashboardPage() {
   if (!session) {
     redirect("/login");
   }
-  const userId = session.user.id;
 
-  const membership = await prisma.groupMember.findFirst({
-    where: { userId },
-    include: { group: { include: { members: { include: { user: true } } } } },
-  });
-
-  if (!membership) {
+  const group = await resolveSelectedGroup(session.user.id);
+  if (!group) {
     return <CreateGroupForm />;
   }
 
-  const members = membership.group.members.map((m) => ({
+  const memberships = await prisma.groupMember.findMany({
+    where: { groupId: group.id },
+    include: { user: true },
+  });
+  const members = memberships.map((m) => ({
     id: m.user.id,
     displayName: m.user.displayName,
   }));
 
-  return (
-    <Dashboard
-      groupId={membership.group.id}
-      groupName={membership.group.name}
-      members={members}
-    />
-  );
+  return <Dashboard groupId={group.id} groupName={group.name} members={members} />;
 }

@@ -16,6 +16,8 @@ export async function joinGroupByToken(userId: string, token: string): Promise<s
     update: {},
     create: { userId, groupId: invite.groupId },
   });
+  // 既存の所属は残したまま、参加したグループを選択中にする（FR-026）
+  await prisma.user.update({ where: { id: userId }, data: { selectedGroupId: invite.groupId } });
 
   logger.info("group.join", { groupId: invite.groupId, userId });
 

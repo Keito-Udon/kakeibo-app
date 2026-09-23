@@ -18,23 +18,44 @@ model User {
   passwordHash String
   displayName  String
   createdAt    DateTime @default(now())
+  // 選択中のグループ（FR-028）。グループが削除されたらnullに戻す
+  selectedGroupId String?
 
+  selectedGroup     Group?          @relation("UserSelectedGroup", fields: [selectedGroupId], references: [id], onDelete: SetNull)
   memberships       GroupMember[]
   createdInvites    InviteToken[]   @relation("InviteCreatedBy")
   paidExpenses      ExpenseRecord[] @relation("ExpensePaidBy")
   createdExpenses   ExpenseRecord[] @relation("ExpenseCreatedBy")
   updatedExpenses   ExpenseRecord[] @relation("ExpenseUpdatedBy")
+  updatedBudgets    MonthlyBudget[]
 }
 
 model Group {
   id             String   @id @default(cuid())
   name           String
-  monthlyBudget  Int?
   createdAt      DateTime @default(now())
 
-  members  GroupMember[]
-  invites  InviteToken[]
-  expenses ExpenseRecord[]
+  members        GroupMember[]
+  invites        InviteToken[]
+  expenses       ExpenseRecord[]
+  monthlyBudgets MonthlyBudget[]
+  selectedBy     User[]          @relation("UserSelectedGroup")
+}
+
+// グループ×年月の設定額（FR-005）。繰越額・残額は保存せず計算する（research.md #5）
+model MonthlyBudget {
+  id          String   @id @default(cuid())
+  groupId     String
+  yearMonth   String // "YYYY-MM"（日本時間基準）
+  amount      Int // 1以上（FR-007）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedById String
+
+  group     Group @relation(fields: [groupId], references: [id])
+  updatedBy User  @relation(fields: [updatedById], references: [id])
+
+  @@unique([groupId, yearMonth])
 }
 
 model GroupMember {
@@ -68,6 +89,7 @@ model ExpenseRecord {
   description   String
   paidById      String
   paymentMethod PaymentMethod
+  spentOn       String // 支出日 "YYYY-MM-DD"（日本時間基準、FR-017）
   createdById   String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -77,4 +99,6 @@ model ExpenseRecord {
   paidBy    User  @relation("ExpensePaidBy", fields: [paidById], references: [id])
   createdBy User  @relation("ExpenseCreatedBy", fields: [createdById], references: [id])
   updatedBy User? @relation("ExpenseUpdatedBy", fields: [updatedById], references: [id])
+
+  @@index([groupId, spentOn])
 }

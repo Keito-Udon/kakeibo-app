@@ -34,13 +34,23 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  // グループの誰でも編集可（FR-012）
+  // 支払者はグループのメンバーに限る（FR-017）
+  if (parsed.data.paidById && !(await isGroupMember(parsed.data.paidById, groupId))) {
+    return NextResponse.json({ error: "paidById is not a group member" }, { status: 400 });
+  }
+
+  // グループの誰でも編集可（001のFR-012）。支出日も変更できる（FR-020）
   const updated = await prisma.expenseRecord.update({
     where: { id: expenseId },
     data: { ...parsed.data, updatedById: session.user.id },
   });
 
-  logger.info("expense.update", { groupId, expenseId, userId: session.user.id });
+  logger.info("expense.update", {
+    groupId,
+    expenseId,
+    userId: session.user.id,
+    spentOn: updated.spentOn,
+  });
 
   return NextResponse.json(updated, { status: 200 });
 }

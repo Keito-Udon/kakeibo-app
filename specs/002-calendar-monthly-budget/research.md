@@ -136,6 +136,12 @@ URLに含めず、サーバー側でユーザーの `selectedGroupId` から解�
   実装時に既存の `dev.db` で保存形式を確認し、マイグレーションSQLのテスト（移行前後のデータ比較）を
   行ってから確定する
 
+**確認結果（T002, 2026-09-23）**: 既存の `prisma/dev.db` で `SELECT typeof(createdAt)` を確認したところ
+`integer`（UNIXエポックからのミリ秒）だった。したがって、日本時間の日付への変換式は
+`date(createdAt / 1000, 'unixepoch', '+9 hours')`、実行時点の日本時間の年月は
+`strftime('%Y-%m', 'now', '+9 hours')` とする。実データ（2026-09-18T06:28:56Z）で `2026-09-18` に
+変換されることを確認済み。
+
 **Alternatives considered**:
 - 別スクリプトでのデータ移行 — 本番で実行を忘れるリスクがある
 - `Group.monthlyBudget` を残して併用 — 予算の置き場所が2つになり、どちらが正か曖昧になる（憲法III）

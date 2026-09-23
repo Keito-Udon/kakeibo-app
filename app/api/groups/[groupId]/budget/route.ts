@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { isGroupMember } from "@/lib/groups";
-import { budgetInputSchema } from "@/lib/validation/expense";
-import { logger } from "@/lib/logger";
+import { setMonthlyBudget } from "@/lib/budget";
+import { currentYearMonthJst } from "@/lib/date";
 
+// 001の旧画面のための一時的な互換エンドポイント。今月（日本時間）の設定額として保存する。
+// 新画面は PUT /api/groups/{groupId}/months/{yearMonth}/budget を使う。Phase 7（T061）で削除する。
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ groupId: string }> },
@@ -21,21 +22,12 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const parsed = budgetInputSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  const amount = body?.monthlyBudget;
+  if (typeof amount !== "number" || !Number.isInteger(amount) || amount <= 0) {
+    return NextResponse.json({ error: "monthlyBudget must be a positive integer" }, { status: 400 });
   }
 
-  const group = await prisma.group.update({
-    where: { id: groupId },
-    data: { monthlyBudget: parsed.data.monthlyBudget },
-  });
+  await setMonthlyBudget(groupId, currentYearMonthJst(), amount, session.user.id);
 
-  logger.info("group.budget.update", {
-    groupId,
-    userId: session.user.id,
-    monthlyBudget: group.monthlyBudget,
-  });
-
-  return NextResponse.json({ groupId, monthlyBudget: group.monthlyBudget });
+  return NextResponse.json({ groupId, monthlyBudget: amount });
 }

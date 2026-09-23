@@ -5,8 +5,11 @@ import { prisma } from "@/lib/db";
 import { isGroupMember } from "@/lib/groups";
 import { expenseInputSchema } from "@/lib/validation/expense";
 import { logger } from "@/lib/logger";
-import { getBudgetSummary } from "@/lib/budget";
+import { getMonthSummary } from "@/lib/budget";
+import { currentYearMonthJst } from "@/lib/date";
 
+// 001の旧画面（components/dashboard.tsx）のための一時的な互換エンドポイント。
+// 新画面は月別・日別のAPIを使う。Phase 7（T061）で削除する。
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ groupId: string }> },
@@ -26,9 +29,14 @@ export async function GET(
     orderBy: { createdAt: "desc" },
   });
 
-  const summary = await getBudgetSummary(groupId);
+  const summary = await getMonthSummary(groupId, currentYearMonthJst());
 
-  return NextResponse.json({ expenses, ...summary });
+  return NextResponse.json({
+    expenses,
+    monthlyBudget: summary.budget?.setAmount ?? null,
+    currentMonthTotal: summary.spent,
+    remaining: summary.remaining,
+  });
 }
 
 export async function POST(
@@ -51,6 +59,11 @@ export async function POST(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
+  // 支払者はグループのメンバーに限る（FR-017）
+  if (!(await isGroupMember(parsed.data.paidById, groupId))) {
+    return NextResponse.json({ error: "paidById is not a group member" }, { status: 400 });
+  }
+
   const expense = await prisma.expenseRecord.create({
     data: {
       groupId,
@@ -58,6 +71,7 @@ export async function POST(
       description: parsed.data.description,
       paidById: parsed.data.paidById,
       paymentMethod: parsed.data.paymentMethod,
+      spentOn: parsed.data.spentOn,
       createdById: session.user.id,
     },
   });
@@ -67,6 +81,7 @@ export async function POST(
     expenseId: expense.id,
     userId: session.user.id,
     amount: expense.amount,
+    spentOn: expense.spentOn,
   });
 
   return NextResponse.json(expense, { status: 201 });

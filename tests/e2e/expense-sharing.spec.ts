@@ -1,39 +1,17 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+
+import { createGroup, signupAndLogin, uniqueEmail } from "./helpers";
 
 // User Story 1 (P1): 支出の記録とグループ共有閲覧
 // quickstart.md シナリオ1〜4に対応する一連のフロー。
 
-async function signup(page: Page, email: string, password: string, displayName: string) {
-  await page.goto("/signup");
-  await page.getByTestId("signup-email").fill(email);
-  await page.getByTestId("signup-password").fill(password);
-  await page.getByTestId("signup-displayname").fill(displayName);
-  await page.getByTestId("signup-submit").click();
-  await page.waitForURL("/login");
-}
-
-async function login(page: Page, email: string, password: string) {
-  await page.goto("/login");
-  await page.getByTestId("login-email").fill(email);
-  await page.getByTestId("login-password").fill(password);
-  await page.getByTestId("login-submit").click();
-  await page.waitForURL("/");
-}
-
 test("2人のユーザーがグループを共有し、支出記録が数秒以内に反映される", async ({ browser }) => {
-  const stamp = Date.now();
-  const emailA = `a-${stamp}@example.com`;
-  const emailB = `b-${stamp}@example.com`;
-  const password = "password123";
-
   const contextA = await browser.newContext();
   const pageA = await contextA.newPage();
-  await signup(pageA, emailA, password, "ユーザーA");
-  await login(pageA, emailA, password);
+  await signupAndLogin(pageA, uniqueEmail("a"), "ユーザーA");
 
   // グループ作成（User Story 1, acceptance scenario 1の前提）
-  await pageA.getByTestId("create-group-name").fill("テスト家計簿");
-  await pageA.getByTestId("create-group-submit").click();
+  await createGroup(pageA, "テスト家計簿");
   await expect(pageA.getByTestId("group-name")).toHaveText("テスト家計簿");
 
   // 招待リンクを発行（FR-014）
@@ -44,8 +22,7 @@ test("2人のユーザーがグループを共有し、支出記録が数秒以�
   // ユーザーBが参加する
   const contextB = await browser.newContext();
   const pageB = await contextB.newPage();
-  await signup(pageB, emailB, password, "ユーザーB");
-  await login(pageB, emailB, password);
+  await signupAndLogin(pageB, uniqueEmail("b"), "ユーザーB");
   await pageB.goto(inviteUrl.replace(/^https?:\/\/[^/]+/, ""));
   await expect(pageB.getByTestId("group-name")).toHaveText("テスト家計簿");
 

@@ -12,19 +12,21 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  const monthlyBudget =
-    typeof body.monthlyBudget === "number" ? body.monthlyBudget : undefined;
 
   if (!name) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
 
+  // 作成者をメンバーにし、作成したグループを選択中にする（FR-026）
   const group = await prisma.group.create({
     data: {
       name,
-      monthlyBudget,
       members: { create: { userId: session.user.id } },
     },
+  });
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { selectedGroupId: group.id },
   });
 
   logger.info("group.create", { groupId: group.id, userId: session.user.id });

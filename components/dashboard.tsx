@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Field, Input, Select } from "@/components/ui/field";
 import { ErrorMessage } from "@/components/ui/message";
+import { todayJst } from "@/lib/date";
 import { fetcher, postJson } from "@/lib/fetcher";
 
 type Member = { id: string; displayName: string };
@@ -257,6 +258,8 @@ function AddExpenseForm({
         description,
         paidById,
         paymentMethod,
+        // 旧画面は記録した日を支出日とする（Phase 7で削除する互換対応）
+        spentOn: todayJst(),
       });
       setAmount("");
       setDescription("");
