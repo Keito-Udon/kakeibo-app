@@ -293,3 +293,12 @@ Task: "lib/format.ts に formatDayAmount / formatYen を実装"
 - 論理的なタスクの区切りごとにコミットする
 - WSLを呼び出せない環境では、`npx prisma migrate dev` や `npm run test:e2e` などはユーザーにWSLの
   ターミナルで実行してもらう（`! <コマンド>`）
+
+## Phase 8: Convergence
+
+`/speckit-converge` による評価で見つかった差分。機能はすべて実装済みで、仕様に書かれた挙動のうち検証するテストが欠けているもの（憲法II「仕様に記述された挙動には検証テストが存在しなければならない」）を補う。
+
+- [X] T069 CRITICAL: `tests/e2e/menu.spec.ts` に、招待リンク画面の `invite-copy` を押すと「コピーしました」と表示され、クリップボードの内容が `invite-url` と一致することの検証を追加する（ブラウザコンテキストに `clipboard-read` / `clipboard-write` の権限を与える） per Constitution II / US4 AC2 (partial)
+- [X] T070 CRITICAL: `tests/e2e/first-run.spec.ts` に、予算を決める前のグループで `/days/{今月-05}` と `/expenses/new` を開くと、どちらも `/months/{今月}/budget` に戻されることの検証を追加する per Constitution II / FR-003 (partial)
+- [X] T071 CRITICAL: `tests/e2e/multi-group.spec.ts` に、メニューからグループを作成して予算を決めずに戻ったグループへ「グループ切り替え」で切り替えると、そのグループの初回の予算決定画面（見出し「予算を決める」）に遷移することの検証を追加する per Constitution II / FR-027 (partial)
+- [X] T072 CRITICAL: `tests/e2e/day-detail.spec.ts` に、支出の支出日を翌月の日付に変更すると、今月のカレンダーからその日の金額が消えて残額が増え、翌月のカレンダーの該当日に金額が表示されることの検証を追加する per Constitution II / Edge Cases「支出日を別の月に変更」 (partial)

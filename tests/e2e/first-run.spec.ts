@@ -17,9 +17,11 @@ test("グループで最初の1回だけ、予算決定画面を経てカレン�
   await expect(page.getByTestId("budget-form")).toContainText("予算を決める");
   await expect(page.getByTestId("budget-form-back")).toHaveCount(0);
 
-  // FR-003: 予算を決めずにカレンダーを開こうとすると予算決定画面に戻される
-  await page.goto(`/months/${thisMonth}`);
-  await page.waitForURL(`/months/${thisMonth}/budget`);
+  // FR-003: 予算を決めずにカレンダー・日別詳細・支出追加を開こうとすると予算決定画面に戻される
+  for (const path of [`/months/${thisMonth}`, `/days/${thisMonth}-05`, "/expenses/new"]) {
+    await page.goto(path);
+    await page.waitForURL(`/months/${thisMonth}/budget`);
+  }
 
   // FR-002: 決定するとカレンダーへ
   await page.getByTestId("budget-form-amount").fill("20000");

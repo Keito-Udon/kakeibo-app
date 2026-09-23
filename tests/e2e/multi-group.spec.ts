@@ -70,4 +70,20 @@ test("グループを作成・切り替えでき、最後に選んだグルー�
   await page.goto("/groups");
   await expect(items).toHaveCount(3);
   await expect(items.filter({ hasText: "グループC" })).toHaveAttribute("data-selected", "true");
+
+  // FR-027: 予算を決めずに残したグループへ切り替えると、そのグループの初回の予算画面へ
+  await page.goto(`/months/${thisMonth}`);
+  await openMenuItem(page, "header-menu-create-group");
+  await page.waitForURL("/groups/new");
+  await page.getByTestId("create-group-name").fill("予算未設定グループ");
+  await page.getByTestId("create-group-submit").click();
+  await page.waitForURL(`/months/${thisMonth}/budget`);
+  await page.goto("/groups");
+  await items.filter({ hasText: "グループC" }).click();
+  await page.waitForURL(`/months/${thisMonth}`);
+  await openMenuItem(page, "header-menu-switch-group");
+  await page.waitForURL("/groups");
+  await items.filter({ hasText: "予算未設定グループ" }).click();
+  await page.waitForURL(`/months/${thisMonth}/budget`);
+  await expect(page.getByTestId("budget-form")).toContainText("予算を決める");
 });

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { currentYearMonthJst, todayJst } from "../../lib/date";
+import { addMonths, currentYearMonthJst, todayJst } from "../../lib/date";
 import {
   addExpenseViaApi,
   createGroupWithBudget,
@@ -99,6 +99,24 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
   await page.getByTestId("expense-form-amount").fill("900");
   await page.getByTestId("expense-form-submit").click();
   await expect(page.getByTestId("expense-form-error")).toContainText("既に削除");
+
+  // Edge Cases: 支出日を翌月に変えると、変更前と変更後の両方の月の合計・残額が再計算される
+  const nextMonth = addMonths(thisMonth, 1);
+  const moving = await addExpenseViaApi(page, groupId, 2500, `${thisMonth}-20`, "月またぎ");
+  await page.goto(`/months/${thisMonth}`);
+  await expect(page.getByTestId(`calendar-day-amount-${thisMonth}-20`)).toHaveText("2,500");
+  await expect(page.getByTestId("calendar-remaining")).toContainText("16,500円");
+  await page.goto(`/expenses/${moving.id}/edit`);
+  await page.getByTestId("expense-form-date").fill(`${nextMonth}-03`);
+  await page.getByTestId("expense-form-submit").click();
+  await page.waitForURL(`/days/${nextMonth}-03`);
+  await page.goto(`/months/${thisMonth}`);
+  await expect(page.getByTestId(`calendar-day-amount-${thisMonth}-20`)).toHaveCount(0);
+  await expect(page.getByTestId("calendar-remaining")).toContainText("19,000円");
+  await page.goto(`/months/${nextMonth}`);
+  await expect(page.getByTestId(`calendar-day-amount-${nextMonth}-03`)).toHaveText("2,500");
+  // 翌月 = 設定額20,000（引き継ぎ）＋ 繰越19,000 − 2,500
+  await expect(page.getByTestId("calendar-remaining")).toContainText("36,500円");
 
   // 001のFR-007: グループ外のユーザーは日別APIにアクセスできない
   const outsiderContext = await browser.newContext();
