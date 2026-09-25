@@ -1,0 +1,89 @@
+# Research: 支出のタイトルとメモ
+
+Phase 0の技術調査。技術スタックは変更しない（新規依存なし）。決める必要があるのは、(1) データの持ち方と
+移行、(2) 文字数の数え方、(3) 入力欄と上限の扱い、(4) 一覧での表示、(5) 既存テストへの影響である。
+
+## 1. データの持ち方と移行（FR-001, FR-003, FR-007）
+
+**Decision**:
+- `ExpenseRecord.description` を `title`（`String`）に名前を変え、`memo`（`String`、既定値 `""`）を加える
+- メモなしは空文字 `""` で表す（`null` は使わない）
+- マイグレーション1本で、列の追加と移行を行う。SQLiteの `length()`・`substr()` は文字（コードポイント）単位で
+  動くため、次のSQLで移行する
+  - `title` = `CASE WHEN length(description) <= 50 THEN description ELSE substr(description, 1, 50) END`
+  - `memo` = `CASE WHEN length(description) <= 50 THEN '' ELSE description END`
+
+**Rationale**:
+- 列の名前を変えるだけにして、既存の値を「タイトル」として引き継ぐのが最も単純（spec のQ4=A）
+- `memo` を必須の文字列（既定値 `""`）にすると、アプリ側で `null` と `""` の2通りを考えずに済む（憲法I）
+- 既存の「内容」は、001〜003のZodスキーマで `max(200)`（UTF-16の単位）で検証されていたため、見た目の
+  文字数でも必ず200以下であり、全文をメモに入れても上限を超えない（spec Edge Cases）
+- 2026-09-25時点の開発用DBでは、支出280件のうち51文字以上は0件（最長13文字）、空白だけの内容も0件。
+  本番DBの内容は不明なため、分割の規則はマイグレーションで一律に処理する
+
+**Alternatives considered**:
+- `description` を残して `title` を新設する — 同じ意味の列が2つ残り、どちらが正か曖昧になる（憲法III）
+- `memo` を `null` 許容にする — 「メモなし」の表し方が2通りになる
+
+**既知の限界**: SQLiteの `substr()` はコードポイント単位で切るため、50文字目が絵文字の結合（家族の絵文字
+など、複数のコードポイントからなる1文字）の途中だと、その1文字が崩れる可能性がある。その場合もメモには全文が
+残るため情報は失われない。開発用DBに該当する支出はない。
+
+## 2. 文字数の数え方（spec Edge Cases）
+
+**Decision**: `lib/text.ts` に `countChars(s)` を作り、`Intl.Segmenter`（`granularity: "grapheme"`）で
+「見た目の1文字」を数える。入力チェック（サーバー）と文字数の表示（入力欄）の両方で同じ関数を使う。
+
+**Rationale**:
+- JavaScript の `String.length` は UTF-16 の単位で数えるため、絵文字が2文字以上に数えられ、
+  spec の「見た目の1文字を1文字として数える」を満たさない
+- `Intl.Segmenter` は Node.js 22 と主要なスマホのブラウザで使える標準機能で、依存を増やさない
+- 同じ関数を使うことで、入力欄の「12/50」の表示とサーバーの判定が食い違わない
+
+**Alternatives considered**:
+- `[...s].length`（コードポイント単位） — 結合した絵文字や、濁点を後から付けた文字を2文字以上に数える
+- 文字数ライブラリの追加 — 標準機能で足りる（憲法I）
+
+## 3. 入力欄と上限の扱い（FR-002〜FR-004）
+
+**Decision**:
+- タイトルは1行の入力欄、メモは複数行の入力欄（4行分の高さ、入力に応じて伸ばさない）
+- 入力欄に `maxLength` は付けない。上限を超えても入力はでき、文字数の表示（「51/50」）を赤くし、保存時に
+  サーバーが拒否してエラーを表示する
+- 前後の空白の除去は、サーバーの入力チェック（Zodの `trim`）で行う。文字数の表示も、除去後の文字数を出す
+
+**Rationale**:
+- HTMLの `maxLength` は UTF-16 の単位で数えるため、絵文字を含むと見た目の50文字に届く前に入力が止まる
+  （#2 と食い違う）
+- 002と同じく、入力チェックはサーバーに寄せ、入力欄は `noValidate` のまま、エラーを画面に表示する方式に
+  そろえる
+
+## 4. 一覧での表示（FR-005）
+
+**Decision**: 日別詳細の各支出で、タイトルを1行目に表示し（長い場合は折り返す）、メモがあればその下に
+`white-space: pre-wrap` と単語の途中でも折り返す指定で、全文を表示する。メモが空なら何も出さない。
+002の `truncate`（1行で切る）は外す。
+
+**Rationale**: spec の「省略しない」（Q3=A、FR-005、SC-001）。タイトルも最大50文字になり、折り返しても
+2行程度に収まる。
+
+## 5. 既存テストへの影響（FR-008）
+
+**Decision**: 「内容」（`description`）を送る・読むテストを `title`（とメモ）に書き換える。対象は
+`tests/e2e/helpers.ts`（`addExpenseViaApi`）、`tests/e2e/authorization.spec.ts`、`day-detail.spec.ts`、
+`member-spending.spec.ts`、`tests/unit/budget-calculation.test.ts`、`day-expenses.test.ts`、
+`expense-validation.test.ts`。E2Eの入力欄のテストIDは `expense-form-description` を `expense-form-title`
+に変え、`expense-form-memo` を加える。
+
+**Rationale**: 仕様の変更（「内容」→タイトル）に合わせてテストを直すもので、テストを弱めるものではない。
+検証していた観点（支出の追加・編集・削除、権限、支払額）はそのまま残す。
+
+## まとめ
+
+| 項目 | 決定内容 |
+|---|---|
+| 新規依存 | なし |
+| データ | `description` → `title`、`memo`（既定値 `""`）を追加。マイグレーション1本で移行 |
+| 文字数 | `Intl.Segmenter` で見た目の1文字を数える（サーバー・入力欄で共通） |
+| 上限 | 入力は止めず、文字数表示を赤くし、サーバーで拒否 |
+| 一覧 | タイトルの下にメモ全文（改行を保って折り返す） |
