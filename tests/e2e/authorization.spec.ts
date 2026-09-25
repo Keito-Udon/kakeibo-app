@@ -41,7 +41,7 @@ test("グループ外のユーザーは支払者にも操作者にもなれず�
   const invalidCreate = await page.request.post(`/api/groups/${groupId}/expenses`, {
     data: {
       amount: 500,
-      description: "部外者払い",
+      title: "部外者払い",
       paidById: outsiderId,
       paymentMethod: "CASH",
       spentOn: day,
@@ -71,7 +71,7 @@ test("グループ外のユーザーは支払者にも操作者にもなれず�
   const foreignCreate = await outsider.request.post(`/api/groups/${groupId}/expenses`, {
     data: {
       amount: 999,
-      description: "侵入",
+      title: "侵入",
       paidById: outsiderId,
       paymentMethod: "CASH",
       spentOn: day,

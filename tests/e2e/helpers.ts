@@ -71,12 +71,12 @@ export async function addExpenseViaApi(
   groupId: string,
   amount: number,
   spentOn: string,
-  description = `支出 ${spentOn}`,
+  title = `支出 ${spentOn}`,
 ) {
   const response = await page.request.post(`/api/groups/${groupId}/expenses`, {
     data: {
       amount,
-      description,
+      title,
       paidById: await currentUserId(page),
       paymentMethod: "CASH",
       spentOn,

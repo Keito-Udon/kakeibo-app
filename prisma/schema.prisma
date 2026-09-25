@@ -86,7 +86,8 @@ model ExpenseRecord {
   id            String        @id @default(cuid())
   groupId       String
   amount        Int
-  description   String
+  title         String // タイトル（1〜50文字、改行なし。004 FR-002）
+  memo          String        @default("") // メモ（0〜200文字、改行可。"" はメモなし。004 FR-003）
   paidById      String
   paymentMethod PaymentMethod
   spentOn       String // 支出日 "YYYY-MM-DD"（日本時間基準、FR-017）

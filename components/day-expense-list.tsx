@@ -103,7 +103,7 @@ export function DayExpenseList({ groupId, date }: { groupId: string; date: strin
             >
                 <div className="flex min-w-0 flex-col gap-1">
                   <p className="text-lg font-bold text-foreground">{formatYen(expense.amount)}</p>
-                  <p className="truncate text-sm text-foreground">{expense.description}</p>
+                  <p className="truncate text-sm text-foreground">{expense.title}</p>
                   <div className="flex items-center gap-2 text-xs text-muted">
                     <span>{expense.paidBy.displayName}</span>
                     {expense.paymentMethod === "MOBILE" ? (

@@ -24,7 +24,7 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 開発用DBを退避する: `mkdir -p ~/kakeibo-backups && cp prisma/dev.db ~/kakeibo-backups/dev-before-004-$(date +%Y%m%d%H%M%S).db`（T007の移行用。T008の移行確認のもとデータにも使う）
+- [X] T001 開発用DBを退避する: `mkdir -p ~/kakeibo-backups && cp prisma/dev.db ~/kakeibo-backups/dev-before-004-$(date +%Y%m%d%H%M%S).db`（T007の移行用。T008の移行確認のもとデータにも使う）
 
 ---
 
@@ -37,21 +37,21 @@
 
 ### Tests for Foundational（実装前に作成し、失敗することを確認する）
 
-- [ ] T002 [P] `tests/unit/text.test.ts` を作成する。`countChars(s)`（見た目の1文字を1文字として数える。research.md #2）が、`"スーパー"` → 4、`"🍙"` → 1、`"👨‍👩‍👧"` → 1、濁点を後から付けた `"が"` → 1、`"a\nb"` → 3（改行も1文字）、`""` → 0 を返すことを検証する
-- [ ] T003 [P] `tests/unit/expense-validation.test.ts` を更新する（data-model.md「バリデーション」）。追加用スキーマについて: (a) `title` の欠落・空文字・空白だけ（`"   "`）を拒否、(b) `title` の前後の空白を除いて保存値にする（`"  スーパー  "` → `"スーパー"`）、(c) `title` は50文字を受け付け51文字を拒否、(d) 絵文字「🍙」×50のタイトルを受け付ける（見た目の文字数で数える）、(e) 改行を含む `title` を拒否、(f) `memo` を省略すると `""`、(g) `memo` の前後の空白を除き、空白と改行だけのメモは `""` になる、(h) `memo` の途中の改行と連続する空行（`"a\n\nb"`）はそのまま保つ、(i) `memo` は改行を含めて200文字を受け付け201文字を拒否、(j) `description` を送っても保存値に含まれない。編集用スキーマについて: (k) `memo: ""` を受け付ける、(l) `memo` を省略すると保存値に `memo` が含まれない（変更しない）、(m) `title` を送る場合は追加時と同じ条件で検証し、空白だけ（`"   "`）・51文字・改行を含む `title` を拒否する（FR-002は編集にも当てはまる）
-- [ ] T004 [P] 既存のテストで支出の「内容」を送る・読む箇所を `title` に書き換える: `tests/e2e/helpers.ts` の `addExpenseViaApi`（引数名 `description` → `title`、送る項目を `title` に）、`tests/e2e/authorization.spec.ts`（2か所）、`tests/e2e/member-spending.spec.ts`（`addPaidExpense`）、`tests/unit/day-expenses.test.ts`・`tests/unit/budget-calculation.test.ts`（Prismaで作る支出の `description` → `title`）。`tests/e2e/day-detail.spec.ts` の入力欄のテストID `expense-form-description` はUS1（T015）で変えるため、ここでは変えない
+- [X] T002 [P] `tests/unit/text.test.ts` を作成する。`countChars(s)`（見た目の1文字を1文字として数える。research.md #2）が、`"スーパー"` → 4、`"🍙"` → 1、`"👨‍👩‍👧"` → 1、濁点を後から付けた `"が"` → 1、`"a\nb"` → 3（改行も1文字）、`""` → 0 を返すことを検証する
+- [X] T003 [P] `tests/unit/expense-validation.test.ts` を更新する（data-model.md「バリデーション」）。追加用スキーマについて: (a) `title` の欠落・空文字・空白だけ（`"   "`）を拒否、(b) `title` の前後の空白を除いて保存値にする（`"  スーパー  "` → `"スーパー"`）、(c) `title` は50文字を受け付け51文字を拒否、(d) 絵文字「🍙」×50のタイトルを受け付ける（見た目の文字数で数える）、(e) 改行を含む `title` を拒否、(f) `memo` を省略すると `""`、(g) `memo` の前後の空白を除き、空白と改行だけのメモは `""` になる、(h) `memo` の途中の改行と連続する空行（`"a\n\nb"`）はそのまま保つ、(i) `memo` は改行を含めて200文字を受け付け201文字を拒否、(j) `description` を送っても保存値に含まれない。編集用スキーマについて: (k) `memo: ""` を受け付ける、(l) `memo` を省略すると保存値に `memo` が含まれない（変更しない）、(m) `title` を送る場合は追加時と同じ条件で検証し、空白だけ（`"   "`）・51文字・改行を含む `title` を拒否する（FR-002は編集にも当てはまる）
+- [X] T004 [P] 既存のテストで支出の「内容」を送る・読む箇所を `title` に書き換える: `tests/e2e/helpers.ts` の `addExpenseViaApi`（引数名 `description` → `title`、送る項目を `title` に）、`tests/e2e/authorization.spec.ts`（2か所）、`tests/e2e/member-spending.spec.ts`（`addPaidExpense`）、`tests/unit/day-expenses.test.ts`・`tests/unit/budget-calculation.test.ts`（Prismaで作る支出の `description` → `title`）。`tests/e2e/day-detail.spec.ts` の入力欄のテストID `expense-form-description` はUS1（T015）で変えるため、ここでは変えない
 
 ### Implementation for Foundational
 
-- [ ] T005 `prisma/schema.prisma` の `ExpenseRecord` で `description String` を `title String` に変え、`memo String @default("")` を加える（data-model.md）
-- [ ] T006 `npx prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --script` で生成したSQLをもとに、`prisma/migrations/<timestamp>_expense_title_memo/migration.sql` を作る。表の作り直しのINSERTでは、`title` を `CASE WHEN length(description) <= 50 THEN description ELSE substr(description, 1, 50) END`、`memo` を `CASE WHEN length(description) <= 50 THEN '' ELSE description END` で埋める（research.md #1）（T005に依存）
-- [ ] T007 T001の退避を確認したうえで、開発用DBに `npx prisma migrate deploy` と `npx prisma generate` を実行し、移行前後で支出の件数・金額の合計が一致すること、全行で `title` が移行前の `description` と一致すること（開発用DBは全件50文字以下）を確認する（T006に依存）
-- [ ] T008 移行規則の確認（FR-007, SC-002, Edge Cases）: T001で退避したDBのコピー（`/tmp` に置く）に、旧スキーマのまま `description` がちょうど50文字、51文字、200文字（改行を含む）の支出を1件ずつ生SQLで追加してから `DATABASE_URL=file:<コピー>` で `migrate deploy` を実行し、(a) 50文字の行は `title` がそのまま・`memo` が空、(b) 51文字・200文字の行は `title` が先頭50文字・`memo` が全文（改行を含む）、(c) 件数・金額の合計が移行前と一致することを確かめ、結果を research.md #1 に追記する。確認後コピーを削除する（T006に依存）
-- [ ] T009 [P] `lib/text.ts` に `countChars(s)` を実装する（`Intl.Segmenter("ja", { granularity: "grapheme" })`。T002を通す）
-- [ ] T010 `lib/validation/expense.ts` を更新する（T003を通す。T009に依存）: `description` を削除し、`title`（`z.string().trim()` の後、1文字以上・`countChars` で50文字以下・改行を含まない）、`memo`（`z.string().trim()` の後、`countChars` で200文字以下。追加用は `.default("")`）を加える。`expenseUpdateSchema` は `partial()` のまま（`memo` の省略は変更なし）
-- [ ] T011 `app/api/groups/[groupId]/expenses/route.ts` の POST で、`description` の代わりに `title` と `memo` を保存する（`[expenseId]/route.ts` の PATCH はスキーマ経由で `title` / `memo` を更新するため変更不要なことを確認する）（T010に依存）
-- [ ] T012 画面を新しいデータの形に合わせる（見た目は変えない一時的な対応。US1・US2で置き換える）: `components/expense-form.tsx` は「内容」欄の値を `title` として送り、初期値の型の `description` を `title` にする。`app/(dashboard)/expenses/new/page.tsx`・`[expenseId]/edit/page.tsx` の初期値を `title: expense.title`（新規は `""`）にする。`components/day-expense-list.tsx` は `expense.title` を表示する（T011に依存）
-- [ ] T013 `npm run test`・`npm run test:e2e`・`npm run lint`・`npx tsc --noEmit` がすべて成功することを確認する
+- [X] T005 `prisma/schema.prisma` の `ExpenseRecord` で `description String` を `title String` に変え、`memo String @default("")` を加える（data-model.md）
+- [X] T006 `npx prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --script` で生成したSQLをもとに、`prisma/migrations/<timestamp>_expense_title_memo/migration.sql` を作る。表の作り直しのINSERTでは、`title` を `CASE WHEN length(description) <= 50 THEN description ELSE substr(description, 1, 50) END`、`memo` を `CASE WHEN length(description) <= 50 THEN '' ELSE description END` で埋める（research.md #1）（T005に依存）
+- [X] T007 T001の退避を確認したうえで、開発用DBに `npx prisma migrate deploy` と `npx prisma generate` を実行し、移行前後で支出の件数・金額の合計が一致すること、全行で `title` が移行前の `description` と一致すること（開発用DBは全件50文字以下）を確認する（T006に依存）
+- [X] T008 移行規則の確認（FR-007, SC-002, Edge Cases）: T001で退避したDBのコピー（`/tmp` に置く）に、旧スキーマのまま `description` がちょうど50文字、51文字、200文字（改行を含む）の支出を1件ずつ生SQLで追加してから `DATABASE_URL=file:<コピー>` で `migrate deploy` を実行し、(a) 50文字の行は `title` がそのまま・`memo` が空、(b) 51文字・200文字の行は `title` が先頭50文字・`memo` が全文（改行を含む）、(c) 件数・金額の合計が移行前と一致することを確かめ、結果を research.md #1 に追記する。確認後コピーを削除する（T006に依存）
+- [X] T009 [P] `lib/text.ts` に `countChars(s)` を実装する（`Intl.Segmenter("ja", { granularity: "grapheme" })`。T002を通す）
+- [X] T010 `lib/validation/expense.ts` を更新する（T003を通す。T009に依存）: `description` を削除し、`title`（`z.string().trim()` の後、1文字以上・`countChars` で50文字以下・改行を含まない）、`memo`（`z.string().trim()` の後、`countChars` で200文字以下。追加用は `.default("")`）を加える。`expenseUpdateSchema` は `partial()` のまま（`memo` の省略は変更なし）
+- [X] T011 `app/api/groups/[groupId]/expenses/route.ts` の POST で、`description` の代わりに `title` と `memo` を保存する（`[expenseId]/route.ts` の PATCH はスキーマ経由で `title` / `memo` を更新するため変更不要なことを確認する）（T010に依存）
+- [X] T012 画面を新しいデータの形に合わせる（見た目は変えない一時的な対応。US1・US2で置き換える）: `components/expense-form.tsx` は「内容」欄の値を `title` として送り、初期値の型の `description` を `title` にする。`app/(dashboard)/expenses/new/page.tsx`・`[expenseId]/edit/page.tsx` の初期値を `title: expense.title`（新規は `""`）にする。`components/day-expense-list.tsx` は `expense.title` を表示する（T011に依存）
+- [X] T013 `npm run test`・`npm run test:e2e`・`npm run lint`・`npx tsc --noEmit` がすべて成功することを確認する
 
 **Checkpoint**: データは `title` / `memo` に移行済みで、画面はこれまでどおり使える
 

@@ -35,7 +35,8 @@ export async function POST(
     data: {
       groupId,
       amount: parsed.data.amount,
-      description: parsed.data.description,
+      title: parsed.data.title,
+      memo: parsed.data.memo,
       paidById: parsed.data.paidById,
       paymentMethod: parsed.data.paymentMethod,
       spentOn: parsed.data.spentOn,

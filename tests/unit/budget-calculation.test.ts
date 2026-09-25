@@ -33,7 +33,7 @@ describe("monthly budget (DB)", () => {
       data: {
         groupId,
         amount,
-        description: `expense ${spentOn}`,
+        title: `expense ${spentOn}`,
         paidById: userId,
         paymentMethod: "CASH",
         createdById: userId,
@@ -130,7 +130,7 @@ describe("monthly budget (DB)", () => {
         data: {
           groupId,
           amount,
-          description: `paid ${spentOn}`,
+          title: `paid ${spentOn}`,
           paidById,
           paymentMethod: "CASH",
           createdById,

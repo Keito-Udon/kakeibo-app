@@ -15,7 +15,7 @@ type Member = { id: string; displayName: string };
 
 export type ExpenseFormValues = {
   amount: number | null;
-  description: string;
+  title: string;
   paidById: string;
   paymentMethod: "CASH" | "MOBILE";
   spentOn: string;
@@ -36,7 +36,7 @@ export function ExpenseForm({
   const router = useRouter();
   const isEdit = expenseId !== undefined;
   const [amount, setAmount] = useState(initial.amount === null ? "" : String(initial.amount));
-  const [description, setDescription] = useState(initial.description);
+  const [description, setDescription] = useState(initial.title);
   const [paidById, setPaidById] = useState(initial.paidById);
   const [paymentMethod, setPaymentMethod] = useState(initial.paymentMethod);
   const [spentOn, setSpentOn] = useState(initial.spentOn);
@@ -47,7 +47,7 @@ export function ExpenseForm({
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    const body = { amount: Number(amount), description, paidById, paymentMethod, spentOn };
+    const body = { amount: Number(amount), title: description, paidById, paymentMethod, spentOn };
     try {
       if (isEdit) {
         await sendJson("PATCH", `/api/groups/${groupId}/expenses/${expenseId}`, body);

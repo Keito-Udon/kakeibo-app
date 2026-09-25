@@ -41,7 +41,7 @@ describe("getDayExpenses", () => {
       data: {
         groupId,
         amount,
-        description: `${amount}円`,
+        title: `${amount}円`,
         paidById: userId,
         paymentMethod: "MOBILE",
         createdById: userId,

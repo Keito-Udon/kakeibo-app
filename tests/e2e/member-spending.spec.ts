@@ -20,7 +20,7 @@ async function addPaidExpense(
   spentOn: string,
 ) {
   const response = await page.request.post(`/api/groups/${groupId}/expenses`, {
-    data: { amount, description: `支払 ${amount}`, paidById, paymentMethod: "CASH", spentOn },
+    data: { amount, title: `支払 ${amount}`, paidById, paymentMethod: "CASH", spentOn },
   });
   expect(response.status()).toBe(201);
   return response.json();
