@@ -103,7 +103,21 @@ export function DayExpenseList({ groupId, date }: { groupId: string; date: strin
             >
                 <div className="flex min-w-0 flex-col gap-1">
                   <p className="text-lg font-bold text-foreground">{formatYen(expense.amount)}</p>
-                  <p className="truncate text-sm text-foreground">{expense.title}</p>
+                  {/* 004 FR-005: タイトルとメモは省略しない。メモは改行を保って折り返す */}
+                  <p
+                    data-testid="day-expense-title"
+                    className="break-words text-sm text-foreground"
+                  >
+                    {expense.title}
+                  </p>
+                  {expense.memo !== "" && (
+                    <p
+                      data-testid="day-expense-memo"
+                      className="whitespace-pre-wrap break-words text-xs text-muted [overflow-wrap:anywhere]"
+                    >
+                      {expense.memo}
+                    </p>
+                  )}
                   <div className="flex items-center gap-2 text-xs text-muted">
                     <span>{expense.paidBy.displayName}</span>
                     {expense.paymentMethod === "MOBILE" ? (

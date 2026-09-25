@@ -89,12 +89,12 @@
 
 ### Tests for User Story 2（実装前に作成し、失敗することを確認する）
 
-- [ ] T019 [US2] `tests/e2e/expense-memo.spec.ts` に表示のテストを追加する（US2 AC1〜4、SC-001、Edge Cases）: APIで、(a) タイトル「スーパー」・メモ「野菜・牛乳\n\n○○店」（連続する空行を含む）、(b) タイトル「長いメモ」・メモ200文字（改行なし、同じ文字の繰り返しではなく読み取れる文）、(c) タイトル「メモなし」・メモなし、の3件を同じ日に登録し、横幅390pxで日別詳細を開いて、(a) の `day-expense-title` が「スーパー」、`day-expense-memo` の `innerText` が「野菜・牛乳\n\n○○店」と一致する（改行・空行を保つ。AC1）、(b) の `day-expense-memo` の `innerText` が200文字の全文と一致し、要素の `scrollWidth` が `clientWidth` を超えない（省略・はみ出しなし。AC2, SC-001）、(c) の支出には `day-expense-memo` がない（AC3）。さらに、別のユーザーBが同じ日の日別詳細を開いたまま、Aが (a) のメモを `PATCH` で変更すると、Bの画面の `day-expense-memo` が数秒以内に新しい内容になる（AC4, FR-006）
+- [X] T019 [US2] `tests/e2e/expense-memo.spec.ts` に表示のテストを追加する（US2 AC1〜4、SC-001、Edge Cases）: APIで、(a) タイトル「スーパー」・メモ「野菜・牛乳\n\n○○店」（連続する空行を含む）、(b) タイトル「長いメモ」・メモ200文字（改行なし、同じ文字の繰り返しではなく読み取れる文）、(c) タイトル「メモなし」・メモなし、の3件を同じ日に登録し、横幅390pxで日別詳細を開いて、(a) の `day-expense-title` が「スーパー」、`day-expense-memo` の `innerText` が「野菜・牛乳\n\n○○店」と一致する（改行・空行を保つ。AC1）、(b) の `day-expense-memo` の `innerText` が200文字の全文と一致し、要素の `scrollWidth` が `clientWidth` を超えない（省略・はみ出しなし。AC2, SC-001）、(c) の支出には `day-expense-memo` がない（AC3）。さらに、別のユーザーBが同じ日の日別詳細を開いたまま、Aが (a) のメモを `PATCH` で変更すると、Bの画面の `day-expense-memo` が数秒以内に新しい内容になる（AC4, FR-006）
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] `components/day-expense-list.tsx` の各支出で、1行で切る表示（`truncate`）をやめ、タイトルを `day-expense-title`（折り返し可）、その下にメモがある場合だけ `day-expense-memo`（`whitespace-pre-wrap` と単語の途中でも折り返す指定、小さめの文字）で表示する。メモが `""` なら要素を出さない（contracts/screens.md）。表示用の型に `title` / `memo` を加える（T019を通す）
-- [ ] T021 [US2] T019 と既存のテストがすべて成功することを確認する
+- [X] T020 [US2] `components/day-expense-list.tsx` の各支出で、1行で切る表示（`truncate`）をやめ、タイトルを `day-expense-title`（折り返し可）、その下にメモがある場合だけ `day-expense-memo`（`whitespace-pre-wrap` と単語の途中でも折り返す指定、小さめの文字）で表示する。メモが `""` なら要素を出さない（contracts/screens.md）。表示用の型に `title` / `memo` を加える（T019を通す）
+- [X] T021 [US2] T019 と既存のテストがすべて成功することを確認する
 
 **Checkpoint**: 書いたメモを日別詳細で省略なく読める
 

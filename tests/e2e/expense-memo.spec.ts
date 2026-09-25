@@ -1,7 +1,14 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import { currentYearMonthJst, todayJst } from "../../lib/date";
-import { createGroupWithBudget, gotoForInput, signupAndLogin, uniqueEmail } from "./helpers";
+import {
+  createGroupWithBudget,
+  currentUserId,
+  gotoForInput,
+  groupIdOnCalendar,
+  signupAndLogin,
+  uniqueEmail,
+} from "./helpers";
 
 // 004 User Story 1: タイトルとメモを分けて支出を記録する（quickstart.md シナリオ1〜3、US1 AC1〜5、Edge Cases）
 
@@ -86,4 +93,73 @@ test("タイトルとメモを分けて記録・編集でき、上限と空の�
   await gotoForInput(page, editUrl);
   await expect(page.getByTestId("expense-form-title")).toHaveValue("スーパー");
   await expect(page.getByTestId("expense-form-memo")).toHaveValue("");
+});
+
+// 004 User Story 2: 日別詳細でタイトルとメモを省略せずに読む（US2 AC1〜4、SC-001、Edge Cases）
+test("日別詳細でタイトルの下にメモの全文が改行を保って表示され、相手の変更も反映される", async ({
+  page,
+  browser,
+}) => {
+  const day = `${currentYearMonthJst()}-14`;
+
+  await signupAndLogin(page, uniqueEmail("memo-view-a"), "表示A");
+  await createGroupWithBudget(page, "メモ表示テスト", 20000);
+  const groupId = await groupIdOnCalendar(page);
+  const aId = await currentUserId(page);
+  const invite = await (await page.request.post(`/api/groups/${groupId}/invite`)).json();
+
+  async function addWithMemo(title: string, memo?: string) {
+    const response = await page.request.post(`/api/groups/${groupId}/expenses`, {
+      data: { amount: 100, title, memo, paidById: aId, paymentMethod: "CASH", spentOn: day },
+    });
+    expect(response.status()).toBe(201);
+    return response.json();
+  }
+
+  // 同じ文字の繰り返しではなく、途中で切れたら分かる200文字の文
+  let longMemo = "";
+  for (let i = 1; longMemo.length < 200; i++) longMemo += `${i}.品目${i} `;
+  longMemo = longMemo.slice(0, 200);
+  expect(longMemo).toHaveLength(200);
+
+  const withBreaks = await addWithMemo("スーパー", "野菜・牛乳\n\n○○店");
+  await addWithMemo("長いメモ", longMemo);
+  await addWithMemo("メモなし");
+
+  // メンバーBを横幅390pxで開く
+  const contextB = await browser.newContext({ viewport: { width: 390, height: 800 } });
+  const pageB = await contextB.newPage();
+  await signupAndLogin(pageB, uniqueEmail("memo-view-b"), "表示B");
+  await pageB.goto(new URL(invite.inviteUrl).pathname);
+  await pageB.waitForURL(/\/months\//);
+  await pageB.goto(`/days/${day}`);
+
+  const itemOf = (title: string) =>
+    pageB.getByTestId("day-expense-item").filter({
+      has: pageB.getByTestId("day-expense-title").getByText(title, { exact: true }),
+    });
+
+  // AC1: 改行と空行を保って表示する
+  await expect(itemOf("スーパー").getByTestId("day-expense-title")).toHaveText("スーパー");
+  expect(await itemOf("スーパー").getByTestId("day-expense-memo").innerText()).toBe("野菜・牛乳\n\n○○店");
+
+  // AC2, SC-001: 200文字のメモを省略せず、横にはみ出さない
+  const longEl = itemOf("長いメモ").getByTestId("day-expense-memo");
+  expect(await longEl.innerText()).toBe(longMemo);
+  const overflow = await longEl.evaluate((el) => el.scrollWidth > el.clientWidth);
+  expect(overflow).toBe(false);
+
+  // AC3: メモのない支出にはメモの要素を出さない
+  await expect(itemOf("メモなし").getByTestId("day-expense-memo")).toHaveCount(0);
+
+  // AC4, FR-006: Aがメモを変えると、Bの画面に数秒以内に反映される
+  const patched = await page.request.patch(`/api/groups/${groupId}/expenses/${withBreaks.id}`, {
+    data: { memo: "変更後のメモ" },
+  });
+  expect(patched.status()).toBe(200);
+  await expect(itemOf("スーパー").getByTestId("day-expense-memo")).toHaveText("変更後のメモ", {
+    timeout: 10_000,
+  });
+
+  await contextB.close();
 });
