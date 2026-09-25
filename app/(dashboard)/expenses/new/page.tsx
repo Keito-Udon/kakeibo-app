@@ -18,7 +18,14 @@ export default async function NewExpensePage({
     <ExpenseForm
       groupId={group.id}
       members={members}
-      initial={{ amount: null, title: "", paidById: userId, paymentMethod: "CASH", spentOn }}
+      initial={{
+        amount: null,
+        title: "",
+        memo: "",
+        paidById: userId,
+        paymentMethod: "CASH",
+        spentOn,
+      }}
     />
   );
 }

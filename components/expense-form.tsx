@@ -6,16 +6,19 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Field, Input, Select } from "@/components/ui/field";
+import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import { ErrorMessage } from "@/components/ui/message";
 import { HttpError, sendJson } from "@/lib/fetcher";
 import { revalidateGroup } from "@/lib/swr-cache";
+import { countChars } from "@/lib/text";
+import { MEMO_MAX_CHARS, TITLE_MAX_CHARS } from "@/lib/validation/expense";
 
 type Member = { id: string; displayName: string };
 
 export type ExpenseFormValues = {
   amount: number | null;
   title: string;
+  memo: string;
   paidById: string;
   paymentMethod: "CASH" | "MOBILE";
   spentOn: string;
@@ -36,7 +39,8 @@ export function ExpenseForm({
   const router = useRouter();
   const isEdit = expenseId !== undefined;
   const [amount, setAmount] = useState(initial.amount === null ? "" : String(initial.amount));
-  const [description, setDescription] = useState(initial.title);
+  const [title, setTitle] = useState(initial.title);
+  const [memo, setMemo] = useState(initial.memo);
   const [paidById, setPaidById] = useState(initial.paidById);
   const [paymentMethod, setPaymentMethod] = useState(initial.paymentMethod);
   const [spentOn, setSpentOn] = useState(initial.spentOn);
@@ -47,7 +51,7 @@ export function ExpenseForm({
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    const body = { amount: Number(amount), title: description, paidById, paymentMethod, spentOn };
+    const body = { amount: Number(amount), title, memo, paidById, paymentMethod, spentOn };
     try {
       if (isEdit) {
         await sendJson("PATCH", `/api/groups/${groupId}/expenses/${expenseId}`, body);
@@ -61,7 +65,9 @@ export function ExpenseForm({
       if (isEdit && err instanceof HttpError && err.status === 404) {
         setError("この支出は既に削除されています");
       } else {
-        setError("保存に失敗しました（金額は1円以上、内容と支出日は必須です）");
+        setError(
+          `保存に失敗しました（金額は1円以上、タイトルは${TITLE_MAX_CHARS}文字以内で必須、メモは${MEMO_MAX_CHARS}文字以内、支出日は必須です）`,
+        );
       }
       setSubmitting(false);
     }
@@ -100,13 +106,25 @@ export function ExpenseForm({
               onChange={(e) => setAmount(e.target.value)}
             />
           </Field>
-          <Field label="内容">
+          {/* 004: 「内容」をタイトル（1行・必須）とメモ（複数行・任意）に分ける。上限は入力を止めず文字数で知らせる */}
+          <Field label="タイトル">
             <Input
-              data-testid="expense-form-description"
+              data-testid="expense-form-title"
               placeholder="スーパー"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
+            <CharCount testId="expense-form-title-count" value={title} max={TITLE_MAX_CHARS} />
+          </Field>
+          <Field label="メモ（任意）">
+            <Textarea
+              data-testid="expense-form-memo"
+              placeholder={"野菜・牛乳\n○○店"}
+              rows={4}
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+            />
+            <CharCount testId="expense-form-memo-count" value={memo} max={MEMO_MAX_CHARS} />
           </Field>
           <Field label="支出日">
             <Input
@@ -150,5 +168,20 @@ export function ExpenseForm({
         </form>
       </Card>
     </main>
+  );
+}
+
+// 前後の空白を除いた見た目の文字数と上限（004 FR-004、保存時の判定と同じ数え方）。超えたら赤字
+function CharCount({ testId, value, max }: { testId: string; value: string; max: number }) {
+  const count = countChars(value.trim());
+  const over = count > max;
+  return (
+    <span
+      data-testid={testId}
+      data-over={over ? "true" : "false"}
+      className={`self-end text-xs font-normal ${over ? "font-medium text-danger" : "text-muted"}`}
+    >
+      {count}/{max}
+    </span>
   );
 }

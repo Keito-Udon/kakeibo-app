@@ -67,14 +67,14 @@
 
 ### Tests for User Story 1（実装前に作成し、失敗することを確認する）
 
-- [ ] T014 [P] [US1] `tests/e2e/expense-memo.spec.ts` を作成する（US1 AC1〜5、Edge Cases）: カレンダーの「＋」から支出追加画面を開き、(1) `expense-form-title` に「スーパー」、`expense-form-memo` に「野菜・牛乳\n○○店」を入力して保存 → 編集画面（日別詳細の `day-expense-edit`）で `expense-form-title` が「スーパー」、`expense-form-memo` の値が「野菜・牛乳\n○○店」（AC1）、(2) タイトルだけで保存できる（AC2）、(3) タイトルが空・空白だけ（`"   "`）のとき、保存すると `expense-form-error` が表示され、URLが変わらない（AC3）、(4) タイトル51文字を入力すると `expense-form-title-count` が「51/50」で `data-over="true"` になり、保存すると `expense-form-error`（AC4）、メモ201文字でも同様に `expense-form-memo-count` が「201/200」・`data-over="true"`・保存でエラー、(5) 「🍙」×50のタイトルは `expense-form-title-count` が「50/50」・`data-over="false"` で、保存できる、(6) タイトルに「  スーパー  」と入力すると `expense-form-title-count` が「4/50」（前後の空白を数えない）、(7) メモのある支出を編集してメモを空にして保存 → 編集画面を開き直すと `expense-form-memo` が空（AC5）
-- [ ] T015 [P] [US1] `tests/e2e/day-detail.spec.ts` の入力欄のテストID `expense-form-description` を `expense-form-title` に書き換える（3か所）
+- [X] T014 [P] [US1] `tests/e2e/expense-memo.spec.ts` を作成する（US1 AC1〜5、Edge Cases）: カレンダーの「＋」から支出追加画面を開き、(1) `expense-form-title` に「スーパー」、`expense-form-memo` に「野菜・牛乳\n○○店」を入力して保存 → 編集画面（日別詳細の `day-expense-edit`）で `expense-form-title` が「スーパー」、`expense-form-memo` の値が「野菜・牛乳\n○○店」（AC1）、(2) タイトルだけで保存できる（AC2）、(3) タイトルが空・空白だけ（`"   "`）のとき、保存すると `expense-form-error` が表示され、URLが変わらない（AC3）、(4) タイトル51文字を入力すると `expense-form-title-count` が「51/50」で `data-over="true"` になり、保存すると `expense-form-error`（AC4）、メモ201文字でも同様に `expense-form-memo-count` が「201/200」・`data-over="true"`・保存でエラー、(5) 「🍙」×50のタイトルは `expense-form-title-count` が「50/50」・`data-over="false"` で、保存できる、(6) タイトルに「  スーパー  」と入力すると `expense-form-title-count` が「4/50」（前後の空白を数えない）、(7) メモのある支出を編集してメモを空にして保存 → 編集画面を開き直すと `expense-form-memo` が空（AC5）
+- [X] T015 [P] [US1] `tests/e2e/day-detail.spec.ts` の入力欄のテストID `expense-form-description` を `expense-form-title` に書き換える（3か所）
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] `components/expense-form.tsx` の「内容」欄を置き換える（contracts/screens.md）: タイトル（ラベル「タイトル」、1行の `Input`、`data-testid="expense-form-title"`）とメモ（ラベル「メモ（任意）」、4行の `textarea`、`data-testid="expense-form-memo"`、既存の入力欄と同じ見た目）。それぞれの下に、前後の空白を除いた `countChars` の文字数と上限（「12/50」「34/200」）を `expense-form-title-count` / `expense-form-memo-count` で表示し、上限を超えたら赤字にして `data-over="true"`（超えていなければ `"false"`）とする。`maxLength` は付けない（research.md #3）。送信する値は `title` と `memo`。初期値の型に `memo` を加える（T014, T015を通す）
-- [ ] T017 [US1] `app/(dashboard)/expenses/new/page.tsx` の初期値に `memo: ""`、`app/(dashboard)/expenses/[expenseId]/edit/page.tsx` の初期値に `memo: expense.memo` を加える（T016に依存）
-- [ ] T018 [US1] T014・T015 と既存のテストがすべて成功することを確認する
+- [X] T016 [US1] `components/expense-form.tsx` の「内容」欄を置き換える（contracts/screens.md）: タイトル（ラベル「タイトル」、1行の `Input`、`data-testid="expense-form-title"`）とメモ（ラベル「メモ（任意）」、4行の `textarea`、`data-testid="expense-form-memo"`、既存の入力欄と同じ見た目）。それぞれの下に、前後の空白を除いた `countChars` の文字数と上限（「12/50」「34/200」）を `expense-form-title-count` / `expense-form-memo-count` で表示し、上限を超えたら赤字にして `data-over="true"`（超えていなければ `"false"`）とする。`maxLength` は付けない（research.md #3）。送信する値は `title` と `memo`。初期値の型に `memo` を加える（T014, T015を通す）
+- [X] T017 [US1] `app/(dashboard)/expenses/new/page.tsx` の初期値に `memo: ""`、`app/(dashboard)/expenses/[expenseId]/edit/page.tsx` の初期値に `memo: expense.memo` を加える（T016に依存）
+- [X] T018 [US1] T014・T015 と既存のテストがすべて成功することを確認する
 
 **Checkpoint**: タイトルとメモを分けて記録・編集できる（日別詳細の一覧はまだタイトルだけ）
 

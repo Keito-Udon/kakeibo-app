@@ -31,6 +31,7 @@ export default async function EditExpensePage({
       initial={{
         amount: expense.amount,
         title: expense.title,
+        memo: expense.memo,
         paidById: expense.paidById,
         paymentMethod: expense.paymentMethod,
         spentOn: expense.spentOn,

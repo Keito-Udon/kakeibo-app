@@ -28,7 +28,7 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
   await expect(page.getByTestId("expense-form-date")).toHaveValue(todayJst());
 
   await page.getByTestId("expense-form-amount").fill("1000");
-  await page.getByTestId("expense-form-description").fill("ランチ");
+  await page.getByTestId("expense-form-title").fill("ランチ");
   await page.getByTestId("expense-form-date").fill(day5);
   await page.getByTestId("expense-form-submit").click();
 
@@ -46,7 +46,7 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
   await page.waitForURL(`/expenses/new?date=${day5}`);
   await expect(page.getByTestId("expense-form-date")).toHaveValue(day5);
   await page.getByTestId("expense-form-amount").fill("500");
-  await page.getByTestId("expense-form-description").fill("カフェ");
+  await page.getByTestId("expense-form-title").fill("カフェ");
   await page.getByTestId("expense-form-payment-method").selectOption("MOBILE");
   await page.getByTestId("expense-form-submit").click();
   await page.waitForURL(`/days/${day5}`);
@@ -84,7 +84,7 @@ test("日別詳細から支出を追加・編集・削除でき、カレンダ�
 
   // FR-022: 0円・マイナスは保存できない
   await gotoForInput(page, `/expenses/new?date=${thisMonth}-07`);
-  await page.getByTestId("expense-form-description").fill("ゼロ");
+  await page.getByTestId("expense-form-title").fill("ゼロ");
   for (const amount of ["0", "-100"]) {
     await page.getByTestId("expense-form-amount").fill(amount);
     await page.getByTestId("expense-form-submit").click();
