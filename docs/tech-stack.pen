@@ -1,0 +1,1407 @@
+{
+  "version": "2.19",
+  "children": [
+    {
+      "type": "frame",
+      "id": "v4Prea",
+      "x": 0,
+      "y": 0,
+      "name": "kakeibo-app 技術スタック",
+      "width": 1180,
+      "fill": "#F4F6F8",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 40,
+      "children": [
+        {
+          "type": "frame",
+          "id": "uC7u6",
+          "name": "Page Header",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "jXgio",
+              "name": "Eyebrow",
+              "fill": "#5B6578",
+              "content": "KAKEIBO-APP · MAIN @ 24514C1",
+              "lineHeight": 1.5,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 11.5
+            },
+            {
+              "type": "text",
+              "id": "ouWsY",
+              "name": "Heading",
+              "fill": "#1C2230",
+              "content": "kakeibo-app 技術スタック",
+              "lineHeight": 1.5,
+              "fontFamily": "Zen Kaku Gothic New",
+              "fontSize": 28,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "n0CpER",
+              "name": "Lead",
+              "fill": "#5B6578",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Next.js 1プロジェクトで画面とAPIを持ち、SQLiteを研究室のLinuxマシンに置いて Tailscale Funnel で公開する構成。バージョンは node_modules に入っている実際の値。",
+              "lineHeight": 1.5,
+              "fontFamily": "Zen Kaku Gothic New",
+              "fontSize": 14
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Isulo",
+          "name": "Body",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "LAWG4",
+              "name": "Runtime",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "X7avrR",
+                  "name": "Browser",
+                  "width": "fill_container",
+                  "fill": "#E8EBF8",
+                  "cornerRadius": 8,
+                  "stroke": "#3949AB",
+                  "strokeWidth": 1.2,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "TpZTh",
+                      "name": "Header",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vTGMc",
+                          "name": "Title",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "C4YjbN",
+                              "name": "Icon",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "smartphone",
+                              "library": "lucide",
+                              "fill": "#3949AB"
+                            },
+                            {
+                              "type": "text",
+                              "id": "G0C1T",
+                              "name": "Title Text",
+                              "fill": "#3949AB",
+                              "content": "ブラウザ（スマホ / PC）",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "zoUnC",
+                          "name": "Tag",
+                          "fill": "#5B6578",
+                          "content": "Client Components",
+                          "lineHeight": 1.5,
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11.5
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V7ugqd",
+                      "name": "Chips",
+                      "width": "fill_container",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "DfTCo",
+                          "name": "React 19.2",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#3949AB",
+                          "strokeWidth": 1,
+                          "padding": [
+                            7,
+                            12
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qjMjf",
+                              "name": "Chip Label",
+                              "fill": "#1C2230",
+                              "content": "React 19.2",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "gMWZ3",
+                          "name": "SWR 2.5（3秒ポーリング）",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#3949AB",
+                          "strokeWidth": 1,
+                          "padding": [
+                            7,
+                            12
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "v8AEop",
+                              "name": "Chip Label",
+                              "fill": "#1C2230",
+                              "content": "SWR 2.5（3秒ポーリング）",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "uhAID",
+                          "name": "Tailwind CSS 4.3",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#3949AB",
+                          "strokeWidth": 1,
+                          "padding": [
+                            7,
+                            12
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "A6IYyC",
+                              "name": "Chip Label",
+                              "fill": "#1C2230",
+                              "content": "Tailwind CSS 4.3",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "fkcSv",
+                          "name": "lucide-react 1.47",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#3949AB",
+                          "strokeWidth": 1,
+                          "padding": [
+                            7,
+                            12
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "HEACC",
+                              "name": "Chip Label",
+                              "fill": "#1C2230",
+                              "content": "lucide-react 1.47",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ICY5Z",
+                      "name": "Note",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "next-auth/react の SessionProvider ／ 自作UI部品 components/ui ／ フォント Geist（next/font）",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jXody",
+                  "name": "Connector HTTPS",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "padding": [
+                    2,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "kjqG3",
+                      "name": "Arrow",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "arrow-down",
+                      "library": "lucide",
+                      "fill": "#5B6578"
+                    },
+                    {
+                      "type": "text",
+                      "id": "I5Zxe4",
+                      "name": "Label",
+                      "fill": "#5B6578",
+                      "content": "HTTPS",
+                      "lineHeight": 1.5,
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rXB5p",
+                  "name": "Tailscale",
+                  "width": "fill_container",
+                  "fill": "#F7EEDC",
+                  "cornerRadius": 8,
+                  "stroke": "#9A6A12",
+                  "strokeWidth": 1.2,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FKbQb",
+                      "name": "Header",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "gGIEO",
+                          "name": "Title",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "Z71hyt",
+                              "name": "Icon",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "globe",
+                              "library": "lucide",
+                              "fill": "#9A6A12"
+                            },
+                            {
+                              "type": "text",
+                              "id": "dwNYi",
+                              "name": "Title Text",
+                              "fill": "#9A6A12",
+                              "content": "Tailscale Funnel",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "dpTLi",
+                          "name": "Tag",
+                          "fill": "#5B6578",
+                          "content": "*.ts.net",
+                          "lineHeight": 1.5,
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11.5
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "RmjgE",
+                      "name": "Note",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "ポート開放や独自ドメインなしで、学内NATの外へHTTPS公開（外向き接続だけで経路を作る）",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XtahP",
+                  "name": "Connector localhost:3000",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "padding": [
+                    2,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Beiwo",
+                      "name": "Arrow",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "arrow-down",
+                      "library": "lucide",
+                      "fill": "#5B6578"
+                    },
+                    {
+                      "type": "text",
+                      "id": "t9uBG",
+                      "name": "Label",
+                      "fill": "#5B6578",
+                      "content": "localhost:3000",
+                      "lineHeight": 1.5,
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Nb9Jo",
+                  "name": "Server",
+                  "width": "fill_container",
+                  "fill": "#E2F2EF",
+                  "cornerRadius": 8,
+                  "stroke": "#1F7A6C",
+                  "strokeWidth": 1.2,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GI1Yg",
+                      "name": "Header",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "IATGB",
+                          "name": "Title",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "nq6lJ",
+                              "name": "Icon",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "server",
+                              "library": "lucide",
+                              "fill": "#1F7A6C"
+                            },
+                            {
+                              "type": "text",
+                              "id": "C0b9y",
+                              "name": "Title Text",
+                              "fill": "#1F7A6C",
+                              "content": "研究室の常時稼働 Linux マシン",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "wlXRS",
+                          "name": "Tag",
+                          "fill": "#5B6578",
+                          "content": "pm2 → next start（Node.js 22）",
+                          "lineHeight": 1.5,
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11.5
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yZUeg",
+                      "name": "Next.js",
+                      "width": "fill_container",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 6,
+                      "stroke": "#1F7A6C",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pO9pf",
+                          "name": "Next Title",
+                          "fill": "#1C2230",
+                          "content": "Next.js 16.3 App Router ・ TypeScript 5.9",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Zen Kaku Gothic New",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wogK9",
+                          "name": "Entry Points",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "adDJ5",
+                              "name": "Server Components",
+                              "width": "fill_container",
+                              "fill": "#E2F2EF",
+                              "cornerRadius": 6,
+                              "stroke": "#1F7A6C",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                12,
+                                14
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ewhBN",
+                                  "name": "Name",
+                                  "fill": "#1C2230",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Server Components",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Zen Kaku Gothic New",
+                                  "fontSize": 13.5,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "AUr1d",
+                                  "name": "Detail",
+                                  "fill": "#5B6578",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "画面（app/(dashboard)）",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Zen Kaku Gothic New",
+                                  "fontSize": 12
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "nVysZ",
+                              "name": "Route Handlers",
+                              "width": "fill_container",
+                              "fill": "#E2F2EF",
+                              "cornerRadius": 6,
+                              "stroke": "#1F7A6C",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                12,
+                                14
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "LTV9r",
+                                  "name": "Name",
+                                  "fill": "#1C2230",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Route Handlers",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Zen Kaku Gothic New",
+                                  "fontSize": 13.5,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "w6wJhE",
+                                  "name": "Detail",
+                                  "fill": "#5B6578",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "/api/groups/… の JSON API",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Zen Kaku Gothic New",
+                                  "fontSize": 12
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "rwTBw",
+                              "name": "Server Actions",
+                              "width": "fill_container",
+                              "fill": "#E2F2EF",
+                              "cornerRadius": 6,
+                              "stroke": "#1F7A6C",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                12,
+                                14
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "g7SS1",
+                                  "name": "Name",
+                                  "fill": "#1C2230",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Server Actions",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Zen Kaku Gothic New",
+                                  "fontSize": 13.5,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "SIozs",
+                                  "name": "Detail",
+                                  "fill": "#5B6578",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "ログイン・ログアウト",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Zen Kaku Gothic New",
+                                  "fontSize": 12
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nKpzY",
+                      "name": "Libraries",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "md0ee",
+                          "name": "Auth.js v5（beta.32）",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#1F7A6C",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "JyFqi",
+                              "name": "Name",
+                              "fill": "#1C2230",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Auth.js v5（beta.32）",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13.5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "VZpEL",
+                              "name": "Detail",
+                              "fill": "#5B6578",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Credentials ・ JWT セッション",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 12
+                            },
+                            {
+                              "type": "text",
+                              "id": "xI7Cy",
+                              "name": "Detail",
+                              "fill": "#5B6578",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "bcryptjs 3 でハッシュ化",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 12
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jGfuW",
+                          "name": "Zod 4.6",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#1F7A6C",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "UzfbZ",
+                              "name": "Name",
+                              "fill": "#1C2230",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Zod 4.6",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13.5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "OUyDB",
+                              "name": "Detail",
+                              "fill": "#5B6578",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "支出・認証の入力検証",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 12
+                            },
+                            {
+                              "type": "text",
+                              "id": "jrovZ",
+                              "name": "Detail",
+                              "fill": "#5B6578",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "lib/validation/",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 12
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "m4vCdf",
+                          "name": "logger",
+                          "width": "fill_container",
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 6,
+                          "stroke": "#1F7A6C",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Q2fqd4",
+                              "name": "Name",
+                              "fill": "#1C2230",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "logger",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 13.5,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "X0QX3",
+                              "name": "Detail",
+                              "fill": "#5B6578",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "JSON構造化ログ（自作）",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 12
+                            },
+                            {
+                              "type": "text",
+                              "id": "VBoMj",
+                              "name": "Detail",
+                              "fill": "#5B6578",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "lib/logger.ts",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 12
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "p0Zmoc",
+                  "name": "Connector Prisma Client",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "padding": [
+                    2,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "lUAEX",
+                      "name": "Arrow",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "arrow-down",
+                      "library": "lucide",
+                      "fill": "#5B6578"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nxQiy",
+                      "name": "Label",
+                      "fill": "#5B6578",
+                      "content": "Prisma Client",
+                      "lineHeight": 1.5,
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JBAbu",
+                  "name": "Data",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "IGlTY",
+                      "name": "Prisma ORM 6.19",
+                      "width": "fill_container",
+                      "fill": "#F6E5EA",
+                      "cornerRadius": 8,
+                      "stroke": "#A1405A",
+                      "strokeWidth": 1.2,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        16,
+                        20
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "AsITU",
+                          "name": "Head",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "Nkb3E",
+                              "name": "Icon",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "layers",
+                              "library": "lucide",
+                              "fill": "#A1405A"
+                            },
+                            {
+                              "type": "text",
+                              "id": "VhQyD",
+                              "name": "Title Text",
+                              "fill": "#A1405A",
+                              "content": "Prisma ORM 6.19",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "B1966U",
+                          "name": "Note",
+                          "fill": "#5B6578",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "schema.prisma ・ マイグレーション3本 ・ モデル6つ",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Zen Kaku Gothic New",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "T6gO4",
+                      "name": "Arrow",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "#5B6578"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "x6Fu9H",
+                      "name": "SQLite",
+                      "width": "fill_container",
+                      "fill": "#F6E5EA",
+                      "cornerRadius": 8,
+                      "stroke": "#A1405A",
+                      "strokeWidth": 1.2,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        16,
+                        20
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "uIrkI",
+                          "name": "Head",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "VhIbY",
+                              "name": "Icon",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "database",
+                              "library": "lucide",
+                              "fill": "#A1405A"
+                            },
+                            {
+                              "type": "text",
+                              "id": "wYLLD",
+                              "name": "Title Text",
+                              "fill": "#A1405A",
+                              "content": "SQLite",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Zen Kaku Gothic New",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "N3c9c",
+                          "name": "Note",
+                          "fill": "#5B6578",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "prisma/dev.db（データの実体はこの1ファイル）",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Zen Kaku Gothic New",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nVKKy",
+              "name": "Dev Tools",
+              "width": 290,
+              "fill": "#EBEEF2",
+              "cornerRadius": 8,
+              "stroke": "#4F5B6E",
+              "strokeWidth": 1.2,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "z5wBjw",
+                  "name": "Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FD4rF",
+                      "name": "Title",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "wJWkn",
+                          "name": "Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "wrench",
+                          "library": "lucide",
+                          "fill": "#4F5B6E"
+                        },
+                        {
+                          "type": "text",
+                          "id": "k47Wd",
+                          "name": "Title Text",
+                          "fill": "#4F5B6E",
+                          "content": "開発・品質",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Zen Kaku Gothic New",
+                          "fontSize": 16,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nywh5",
+                  "name": "TypeScript 5.9",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": "#CDD3DD",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yItBj",
+                      "name": "Name",
+                      "fill": "#1C2230",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "TypeScript 5.9",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IlvAb",
+                      "name": "Detail",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "型チェック ・ @/ パスエイリアス",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jVsyw",
+                  "name": "ESLint 9",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": "#CDD3DD",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "w2AN5",
+                      "name": "Name",
+                      "fill": "#1C2230",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "ESLint 9",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "U980XQ",
+                      "name": "Detail",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "eslint-config-next",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "e3YaW",
+                  "name": "Vitest 4.1",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": "#CDD3DD",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tutU3",
+                      "name": "Name",
+                      "fill": "#1C2230",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Vitest 4.1",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zSg4M",
+                      "name": "Detail",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "ユニットテスト 11本（tests/unit）",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GvNd5",
+                  "name": "Playwright 1.63",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": "#CDD3DD",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PlCBs",
+                      "name": "Name",
+                      "fill": "#1C2230",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Playwright 1.63",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tdnok",
+                      "name": "Detail",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "E2E 10本 ・ Chromium",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "V5u1M1",
+                  "name": "spec-kit 1.0.6",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": "#CDD3DD",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "w50po",
+                      "name": "Name",
+                      "fill": "#1C2230",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "spec-kit 1.0.6",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "uf3HS",
+                      "name": "Detail",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "仕様駆動（specs/001〜004）",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "G829fO",
+                  "name": "Claude Code",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": "#CDD3DD",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PZZhz",
+                      "name": "Name",
+                      "fill": "#1C2230",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Claude Code",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MUJS9",
+                      "name": "Detail",
+                      "fill": "#5B6578",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "speckit-* スキルで実装",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Pmab8",
+                  "name": "Deploy Flow",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": [
+                    10,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X0nLUA",
+                      "name": "Flow Title",
+                      "fill": "#4F5B6E",
+                      "content": "変更が本番に届くまで",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 13.5,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WbsZX",
+                      "name": "Step",
+                      "fill": "#1C2230",
+                      "content": "WSL2 で開発",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12.5
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bkHSM",
+                      "name": "Arrow",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "arrow-down",
+                      "library": "lucide",
+                      "fill": "#5B6578"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dhDcF",
+                      "name": "Step",
+                      "fill": "#1C2230",
+                      "content": "GitHub へ push",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12.5
+                    },
+                    {
+                      "type": "icon",
+                      "id": "r7zqK",
+                      "name": "Arrow",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "arrow-down",
+                      "library": "lucide",
+                      "fill": "#5B6578"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zqzKk",
+                      "name": "Step",
+                      "fill": "#1C2230",
+                      "content": "研究室で git pull ・ npm ci",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "CKh7T",
+                      "name": "Step",
+                      "fill": "#1C2230",
+                      "content": "prisma migrate deploy",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "TcqWm",
+                      "name": "Step",
+                      "fill": "#1C2230",
+                      "content": "next build ・ pm2 restart",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Zen Kaku Gothic New",
+                      "fontSize": 12.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fileToken": "8577d22d-959c-497f-bdda-c299e9a28618"
+}
